@@ -16,7 +16,7 @@ ROWS = COLS = 4
 GAP = 12
 CELL = (BOARD_SIZE - GAP * (COLS + 1)) // COLS
 FPS = 60
-SAVE_FILE = "2048_best_score.json"
+SAVE_FILE = "blockrush_best_score.json"
 
 BACKGROUND = (250, 248, 239)
 BOARD = (187, 173, 160)
@@ -33,7 +33,7 @@ TILE_COLORS = {
 }
 
 
-class Game2048:
+class GameBlockRush:
     def __init__(self):
         pygame.init()
         try:
@@ -41,7 +41,7 @@ class Game2048:
         except pygame.error:
             pass
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption("2048")
+        pygame.display.set_caption("BlockRush")
         self.clock = pygame.time.Clock()
         self.title_font = pygame.font.Font(None, 72)
         self.score_font = pygame.font.Font(None, 26)
@@ -149,7 +149,7 @@ class Game2048:
                     self.draw_tile(self.board[row][col], row, col, scale)
 
     def draw_header(self):
-        self.draw_text_center("2048", self.title_font, (120, 58), DARK)
+        self.draw_text_center("BlockRush", self.title_font, (120, 58), DARK)
         self.draw_text_center("Join the numbers", self.ui_font, (125, 104), DARK)
         score_box = pygame.Rect(320, 30, 105, 70)
         best_box = pygame.Rect(435, 30, 125, 70)
@@ -172,8 +172,8 @@ class Game2048:
     def draw(self):
         self.screen.fill(BACKGROUND)
         if self.state == "start":
-            self.draw_text_center("2048", self.title_font, (WIDTH // 2, 200), DARK)
-            self.draw_text_center("Slide tiles. Match numbers. Reach 2048.", self.ui_font, (WIDTH // 2, 270), DARK)
+            self.draw_text_center("BlockRush", self.title_font, (WIDTH // 2, 200), DARK)
+            self.draw_text_center("Slide tiles. Match numbers. Reach the top!", self.ui_font, (WIDTH // 2, 270), DARK)
             self.action_button = pygame.Rect(WIDTH // 2 - 100, 330, 200, 54)
             self.draw_button(self.action_button, "Start Game")
             self.draw_text_center("Use arrow keys to move", self.score_font, (WIDTH // 2, 425), DARK)
@@ -181,7 +181,7 @@ class Game2048:
             self.draw_header()
             self.draw_board()
             if self.state == "won":
-                self.draw_overlay("You made 2048!", "A brilliant move.", "Keep Playing")
+                self.draw_overlay("You made it!", "A brilliant move.", "Keep Playing")
             elif self.state == "lost":
                 self.draw_overlay("Game Over", f"Score: {self.score}", "Play Again")
         pygame.display.flip()
@@ -305,20 +305,4 @@ class Game2048:
 
 
 if __name__ == "__main__":
-    Game2048().run()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    GameBlockRush().run()
