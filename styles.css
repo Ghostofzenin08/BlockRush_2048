@@ -770,25 +770,26 @@ body {
 .support-content {
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  padding: 32px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  gap: 36px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 10px 0;
+  box-shadow: none;
 }
 
-.docs-sec { display: flex; flex-direction: column; gap: 10px; }
+.docs-sec { display: flex; flex-direction: column; gap: 12px; }
 
 .doc-heading {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
   color: var(--text-color);
-  border-left: 4px solid var(--accent-cyan);
-  padding-left: 12px;
+  border-left: none;
+  padding-left: 0;
+  margin-top: 10px;
 }
 
-.doc-body, .doc-bullets { font-size: 15px; line-height: 1.6; opacity: 0.85; }
+.doc-body, .doc-bullets { font-size: 16px; line-height: 1.6; opacity: 0.85; }
 .doc-bullets { padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
 
 .highlight-email { font-weight: 700; color: var(--accent-yellow); }
@@ -797,8 +798,8 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-top: 20px;
-  border-top: 1px dashed var(--border-color);
+  padding-top: 30px;
+  border-top: none;
 }
 
 .dev-lbl { font-size: 14px; font-weight: 600; opacity: 0.7; }
