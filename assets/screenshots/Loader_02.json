@@ -1,0 +1,327 @@
+{
+  "version": 1,
+  "playbackStyle": "loop",
+  "nodes": [
+    {
+      "node": "596:47",
+      "timelineDurationMs": 2000,
+      "fields": [
+        {
+          "field": "opacity@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": 100,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 5,
+              "value": 100,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.5,
+                  "p1y": 0,
+                  "p2x": 0.5,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 267.62,
+              "value": 25,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 2000,
+              "value": 25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "597:137",
+      "timelineDurationMs": 2000,
+      "fields": [
+        {
+          "field": "opacity@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": 100,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 1938.334,
+              "value": 100,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.5,
+                  "p1y": 0,
+                  "p2x": 0.5,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 2000,
+              "value": 25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "596:58",
+      "timelineDurationMs": 2000,
+      "fields": [
+        {
+          "field": "opacity@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": 100,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 267.62,
+              "value": 100,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.5,
+                  "p1y": 0,
+                  "p2x": 0.5,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 542.887,
+              "value": 25,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 2000,
+              "value": 25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "596:68",
+      "timelineDurationMs": 2000,
+      "fields": [
+        {
+          "field": "opacity@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": 100,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 1655.422,
+              "value": 100,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.5,
+                  "p1y": 0,
+                  "p2x": 0.5,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 1938.334,
+              "value": 25,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 2000,
+              "value": 25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "596:60",
+      "timelineDurationMs": 2000,
+      "fields": [
+        {
+          "field": "opacity@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": 100,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 542.887,
+              "value": 100,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.5,
+                  "p1y": 0,
+                  "p2x": 0.5,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 802.86,
+              "value": 25,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 2000,
+              "value": 25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "596:62",
+      "timelineDurationMs": 2000,
+      "fields": [
+        {
+          "field": "opacity@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": 100,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 802.86,
+              "value": 100,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.5,
+                  "p1y": 0,
+                  "p2x": 0.5,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 1081.95,
+              "value": 25,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 2000,
+              "value": 25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "596:64",
+      "timelineDurationMs": 2000,
+      "fields": [
+        {
+          "field": "opacity@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": 100,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 1081.95,
+              "value": 100,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.5,
+                  "p1y": 0,
+                  "p2x": 0.5,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 1383.978,
+              "value": 25,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 2000,
+              "value": 25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "596:66",
+      "timelineDurationMs": 2000,
+      "fields": [
+        {
+          "field": "opacity@-1:-1",
+          "keyframes": [
+            {
+              "timeMs": 0,
+              "value": 100,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 1383.978,
+              "value": 100,
+              "easingToNext": {
+                "bezierValues": {
+                  "p1x": 0.5,
+                  "p1y": 0,
+                  "p2x": 0.5,
+                  "p2y": 1
+                }
+              }
+            },
+            {
+              "timeMs": 1655.422,
+              "value": 25,
+              "easingToNext": {
+                "hold": true
+              }
+            },
+            {
+              "timeMs": 2000,
+              "value": 25
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BlockRush - Puzzle Game</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inria+Sans:wght@400;700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Screen 1: Splash / Dual-Phase Loader (Matching Figma Loader_01 & Loader_02) -->
+  <div id="screen-loader" class="screen active">
+    <!-- Loader Phase 1: Ghostofzenin Intro (Using Exact PNG Logo Asset) -->
+    <div id="loader-phase-1" class="loader-phase active">
+      <div class="goz-splash-brand">
+        <img src="goz_logo_dark.png" alt="Ghostofzenin" class="goz-logo-img dark-only">
+        <img src="goz_logo_light.png" alt="Ghostofzenin" class="goz-logo-img light-only">
+      </div>
+    </div>
+
+    <!-- Loader Phase 2: BlockRush U-Shape Animated Grid (Figma Node 596:44 / 611:1015) -->
+    <div id="loader-phase-2" class="loader-phase">
+      <div class="u-loader-grid">
+        <!-- Row 1 -->
+        <div class="u-block r1-c1"></div>
+        <div class="u-block empty"></div>
+        <div class="u-block empty"></div>
+        <div class="u-block r1-c4"></div>
+        <!-- Row 2 -->
+        <div class="u-block r2-c1"></div>
+        <div class="u-block empty"></div>
+        <div class="u-block empty"></div>
+        <div class="u-block r2-c4"></div>
+        <!-- Row 3 -->
+        <div class="u-block r3-c1"></div>
+        <div class="u-block r3-c2"></div>
+        <div class="u-block r3-c3"></div>
+        <div class="u-block r3-c4"></div>
+      </div>
+      <div class="loader-brand-title">BlockRush</div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Main Menu View (Figma main menu / main) -->
+  <div id="screen-menu" class="screen">
+    <div class="menu-container">
+      
+      <!-- Left Side Cascading Colored Block Tiles -->
+      <div class="cascade-section">
+        <div class="tile-card tile-2 pos-1"><span class="val">2</span></div>
+        <div class="tile-card tile-2048 pos-2"><span class="val">2048</span></div>
+        <div class="tile-card tile-4 pos-3"><span class="val">4</span></div>
+        <div class="tile-card tile-16 pos-4"><span class="val">16</span></div>
+        <div class="tile-card tile-16 pos-5"><span class="val">16</span></div>
+        <div class="tile-card tile-4 pos-6"><span class="val">4</span></div>
+        <div class="tile-card tile-256 pos-7"><span class="val">256</span></div>
+        <div class="tile-card tile-1024 pos-8"><span class="val">1024</span></div>
+        <div class="tile-card tile-8 pos-9"><span class="val">8</span></div>
+        <div class="tile-card tile-32 pos-10"><span class="val">32</span></div>
+      </div>
+
+      <!-- Right Side Navigation & Brand Menu -->
+      <div class="menu-right">
+        <!-- Brand Header Logo -->
+        <div class="brand-header">
+          <div class="blockrush-logo">
+            <span class="sq sq-1"></span>
+            <span class="sq sq-2"></span>
+            <span class="sq sq-3"></span>
+            <span class="sq sq-4"></span>
+            <span class="sq sq-5"></span>
+            <span class="sq sq-6"></span>
+          </div>
+          <h1 class="brand-title">BlockRush</h1>
+        </div>
+
+        <!-- Menu Navigation Buttons (Matching Figma Node 600:561 & 600:548) -->
+        <div class="menu-buttons">
+          <button id="btn-start" class="menu-btn">
+            <svg class="btn-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+            <span>Start Playing</span>
+          </button>
+          <button id="btn-challenge" class="menu-btn">
+            <svg class="btn-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3h8v8H3zm10 0h8v8h-8zM3 13h8v8H3zm10 0h8v8h-8z"/></svg>
+            <span>Challenge</span>
+          </button>
+          <button id="btn-playground" class="menu-btn">
+            <svg class="btn-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+            <span>Playground</span>
+          </button>
+        </div>
+
+        <!-- Portal Quick Links Footer -->
+        <div class="menu-portal-links">
+          <button id="link-support" class="portal-link-btn">BlockDocs Support</button>
+          <span class="link-sep">•</span>
+          <button id="link-terms" class="portal-link-btn">Terms & Conditions</button>
+        </div>
+
+        <!-- Footer Section -->
+        <div class="menu-footer">
+          <div class="made-with">
+            <span>Made with</span>
+            <div class="goz-inline">
+              <img src="goz_logo_dark.png" alt="Ghostofzenin" class="goz-logo-img-sm dark-only">
+              <img src="goz_logo_light.png" alt="Ghostofzenin" class="goz-logo-img-sm light-only">
+            </div>
+          </div>
+
+          <div class="toolbar-icons">
+            <button id="btn-audio" class="tool-btn" title="Toggle Sound">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            </button>
+            <button id="btn-help" class="tool-btn" title="Help / How to Play">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+            </button>
+            <button id="btn-info" class="tool-btn" title="Game Info / Support">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+            </button>
+            <button id="btn-theme" class="tool-btn" title="Toggle Light/Dark Theme">
+              <svg class="theme-icon-dark" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Screen 3: Game Interface View (Figma Game_interface_light / 597:192) -->
+  <div id="screen-game" class="screen">
+    <div class="game-wrapper">
+      
+      <!-- Top Navigation Control Bar -->
+      <div class="game-header">
+        <div class="header-left">
+          <div class="pill-badge level-badge">
+            <span id="game-mode-title">Challenge</span>
+            <span id="level-num" class="badge-value">0/10</span>
+          </div>
+        </div>
+
+        <div class="header-center">
+          <div class="pill-badge level-tag">
+            <span id="current-level-text">Level 1</span>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button class="icon-btn tool-audio" title="Audio">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+          </button>
+          <button id="btn-pause" class="icon-btn" title="Pause">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+          </button>
+          <button id="btn-exit" class="icon-btn" title="Exit Game">
+            <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M10.09 15.59L11.5 17l5-5-5-5-1.41 1.41L12.67 11H3v2h9.67l-2.58 2.59zM19 3H5c-1.11 0-2 .9-2 2v4h2V5h14v14H5v-4H3v4c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Center Game Area -->
+      <div class="game-body">
+        <!-- Game Grid Board -->
+        <div id="game-board" class="board-grid grid-2x2"></div>
+
+        <!-- Vertical Timer Progress Bar (Challenge Mode) -->
+        <div id="challenge-timer-container" class="timer-sidebar hidden">
+          <div class="timer-text" id="timer-display">00 : 10</div>
+          <div class="timer-track">
+            <div id="timer-fill" class="timer-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Bottom Branding -->
+      <div class="game-footer">
+        <div class="blockrush-logo mini">
+          <span class="sq sq-1"></span>
+          <span class="sq sq-2"></span>
+          <span class="sq sq-3"></span>
+          <span class="sq sq-4"></span>
+          <span class="sq sq-5"></span>
+          <span class="sq sq-6"></span>
+        </div>
+        <span class="brand-subtext">BlockRush</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Screen 4: Weekly Challenge Selector (Figma Challenge light mode / 601:939) -->
+  <div id="screen-weekly-challenge" class="screen">
+    <div class="weekly-wrapper">
+      <div class="weekly-header">
+        <button id="btn-back-weekly" class="icon-btn back-btn">
+          <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <h2>Challenge <span class="grid-ic">❖</span></h2>
+      </div>
+      <p class="weekly-subtitle">Complete Weekly Challenges</p>
+
+      <div class="days-list">
+        <div class="day-card active">
+          <div class="check-icon">✓</div>
+          <span class="day-label">Day 1</span>
+        </div>
+        <div class="day-card locked"><span class="day-label">Day 2</span></div>
+        <div class="day-card locked"><span class="day-label">Day 3</span></div>
+        <div class="day-card locked"><span class="day-label">Day 4</span></div>
+        <div class="day-card locked"><span class="day-label">Day 5</span></div>
+      </div>
+
+      <button id="btn-start-challenge-mode" class="menu-btn center-act-btn">
+        <span>Start Challenge</span>
+      </button>
+
+      <div class="game-footer">
+        <div class="blockrush-logo mini">
+          <span class="sq sq-1"></span>
+          <span class="sq sq-2"></span>
+          <span class="sq sq-3"></span>
+          <span class="sq sq-4"></span>
+          <span class="sq sq-5"></span>
+          <span class="sq sq-6"></span>
+        </div>
+        <span class="brand-subtext">BlockRush</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 5: Playground Mode Selector (Figma Playground light mode / 600:773) -->
+  <div id="screen-playground-select" class="screen">
+    <div class="playground-wrapper">
+      <div class="weekly-header">
+        <button id="btn-back-playground" class="icon-btn back-btn">
+          <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <h2>PlayGround <span class="grid-ic">📈</span></h2>
+      </div>
+
+      <!-- Player Math Banner Section (Figma 622:1191 & 622:1192 / Node 600:773) -->
+      <div class="player-math-card">
+        <span class="player-handle">#player0123</span>
+        <div class="player-avatar">🛡️</div>
+        <h3 class="banner-heading">Increase Your Level of Math</h3>
+        <button id="btn-rush-level" class="rush-act-btn">Rush the level</button>
+      </div>
+
+      <div class="playground-modes">
+        <!-- Beginner Tier -->
+        <div id="pg-beginner" class="pg-card active">
+          <div class="pg-left">
+            <span class="badge-icon">🛡️</span>
+            <div class="pg-title-group">
+              <span class="pg-title">Beginner</span>
+              <span class="rush-lbl">Rush level</span>
+              <div class="rush-progress-bar"><div class="rush-progress-fill p50"></div></div>
+            </div>
+          </div>
+          <div class="pg-right">
+            <span class="pg-level-badge">Level 0</span>
+            <button class="pg-play-circle" title="Play Beginner">
+              <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Pro Tier -->
+        <div id="pg-pro" class="pg-card">
+          <div class="pg-left">
+            <span class="badge-icon">⚡</span>
+            <div class="pg-title-group">
+              <span class="pg-title">Pro</span>
+              <span class="rush-lbl">Rush level</span>
+              <div class="rush-progress-bar"><div class="rush-progress-fill p50"></div></div>
+            </div>
+          </div>
+          <div class="pg-right">
+            <span class="pg-level-badge">Level 0</span>
+            <button class="pg-play-circle" title="Play Pro">
+              <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Master Tier -->
+        <div id="pg-master" class="pg-card">
+          <div class="pg-left">
+            <span class="badge-icon">👑</span>
+            <div class="pg-title-group">
+              <span class="pg-title">Master</span>
+              <span class="rush-lbl">Rush level</span>
+              <div class="rush-progress-bar"><div class="rush-progress-fill p55"></div></div>
+            </div>
+          </div>
+          <div class="pg-right">
+            <span class="pg-level-badge">Level 0</span>
+            <button class="pg-play-circle" title="Play Master">
+              <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-footer">
+        <div class="blockrush-logo mini">
+          <span class="sq sq-1"></span>
+          <span class="sq sq-2"></span>
+          <span class="sq sq-3"></span>
+          <span class="sq sq-4"></span>
+          <span class="sq sq-5"></span>
+          <span class="sq sq-6"></span>
+        </div>
+        <span class="brand-subtext">BlockRush</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 6: BlockDocs Support & FAQ Portal (Figma support / 622:1196) -->
+  <div id="screen-support" class="screen">
+    <div class="support-wrapper">
+      <div class="support-header">
+        <button id="btn-back-support" class="icon-btn back-btn">
+          <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <div class="blockdocs-brand">
+          <div class="blockrush-logo mini">
+            <span class="sq sq-1"></span>
+            <span class="sq sq-2"></span>
+            <span class="sq sq-3"></span>
+            <span class="sq sq-4"></span>
+            <span class="sq sq-5"></span>
+            <span class="sq sq-6"></span>
+          </div>
+          <h2>BlockDocs</h2>
+        </div>
+      </div>
+
+      <!-- Sub Navigation Bar (Figma Frame 6 / 622:1395) -->
+      <nav class="support-subnav">
+        <button class="subnav-tab active" data-target="sec-help">Support</button>
+        <button class="subnav-tab" data-target="sec-howtoplay">How to play</button>
+        <button class="subnav-tab" data-target="sec-about">About Game</button>
+        <button class="subnav-tab" data-target="sec-feedback">Feedback & Suggestions</button>
+      </nav>
+
+      <!-- Main Support Content Sections (Figma Frame 7 / 622:1417) -->
+      <div class="support-content">
+        
+        <section id="sec-help" class="docs-sec">
+          <h2 class="doc-heading">Need Help?</h2>
+          <p class="doc-body">We're here to help you enjoy the game. If you're facing an issue, have a question, or want to share feedback, check the information below.</p>
+        </section>
+
+        <section id="sec-howtoplay" class="docs-sec">
+          <h2 class="doc-heading">How to Play</h2>
+          <ul class="doc-bullets">
+            <li>Swipe up, down, left, or right to move the number blocks.</li>
+            <li>Blocks with the same number merge when they collide.</li>
+            <li>Keep merging blocks to create higher numbers.</li>
+            <li>The game ends when there are no valid moves left.</li>
+          </ul>
+        </section>
+
+        <section id="sec-about" class="docs-sec">
+          <h2 class="doc-heading">Game Progress</h2>
+          <p class="doc-body">Your score increases as you merge blocks. Try to beat your best score and reach the highest possible number.</p>
+
+          <h2 class="doc-heading mt-20">Game Controls</h2>
+          <p class="doc-body"><strong>Mobile:</strong> Swipe in any direction to move the blocks.</p>
+          <p class="doc-body"><strong>Desktop:</strong> Use the Arrow Keys or WASD keys & mouse controls.</p>
+        </section>
+
+        <section id="sec-issues" class="docs-sec">
+          <h2 class="doc-heading">Game Issues</h2>
+          <ul class="doc-bullets">
+            <li>Restart the game.</li>
+            <li>Refresh or reopen the application.</li>
+            <li>Make sure your browser/app is updated.</li>
+            <li>If the issue continues, contact us with details about the problem.</li>
+          </ul>
+        </section>
+
+        <section id="sec-feedback" class="docs-sec">
+          <h2 class="doc-heading">Feedback & Suggestions</h2>
+          <p class="doc-body">Have an idea that could make the game better? We'd love to hear it. Share your suggestions, feature requests, or feedback with us.</p>
+        </section>
+
+        <section id="sec-contact" class="docs-sec">
+          <h2 class="doc-heading">Contact Support</h2>
+          <p class="doc-body">For technical issues or other support requests, contact us at:</p>
+          <p class="doc-body highlight-email">Email: support@blockrush.game</p>
+          <p class="doc-body">We'll do our best to help you as soon as possible.</p>
+          <p class="doc-signoff">Have fun, keep merging, and beat your high score!</p>
+        </section>
+
+        <!-- Developer Attribution -->
+        <div class="dev-attribution">
+          <div class="goz-inline">
+            <img src="goz_logo_dark.png" alt="Ghostofzenin" class="goz-logo-img-sm dark-only">
+            <img src="goz_logo_light.png" alt="Ghostofzenin" class="goz-logo-img-sm light-only">
+          </div>
+          <span class="dev-lbl">-Developers</span>
+        </div>
+
+        <!-- Query Form Section (Figma 622:1226 & 622:1229) -->
+        <form id="support-query-form" class="query-form">
+          <textarea id="query-input" class="query-textarea" placeholder="Write your Query here ..." required></textarea>
+          <button type="submit" class="submit-query-btn">Submit</button>
+        </form>
+        <div id="query-toast" class="toast hidden">✓ Your query has been submitted successfully!</div>
+
+      </div>
+
+      <div class="game-footer">
+        <div class="blockrush-logo mini">
+          <span class="sq sq-1"></span>
+          <span class="sq sq-2"></span>
+          <span class="sq sq-3"></span>
+          <span class="sq sq-4"></span>
+          <span class="sq sq-5"></span>
+          <span class="sq sq-6"></span>
+        </div>
+        <span class="brand-subtext">BlockRush</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 7: BlockDocs Terms & Conditions (Figma support - T&C / 622:1365) -->
+  <div id="screen-terms" class="screen">
+    <div class="support-wrapper">
+      <div class="support-header">
+        <button id="btn-back-terms" class="icon-btn back-btn">
+          <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        </button>
+        <div class="blockdocs-brand">
+          <div class="blockrush-logo mini">
+            <span class="sq sq-1"></span>
+            <span class="sq sq-2"></span>
+            <span class="sq sq-3"></span>
+            <span class="sq sq-4"></span>
+            <span class="sq sq-5"></span>
+            <span class="sq sq-6"></span>
+          </div>
+          <h2>BlockDocs - T&C</h2>
+        </div>
+      </div>
+
+      <div class="support-content terms-content">
+        <h1 class="terms-title">Terms & Conditions</h1>
+        <p class="terms-date">Last Updated: September 9, 2026</p>
+        <p class="terms-intro">Welcome to <strong>BlockRush</strong>. By playing or using this game, you agree to the following Terms & Conditions.</p>
+
+        <ol class="terms-list">
+          <li>
+            <h3>1. Use of the Game</h3>
+            <p>You may use the game for personal and entertainment purposes. Please use the game responsibly and do not attempt to misuse, disrupt, or damage the game or its services.</p>
+          </li>
+          <li>
+            <h3>2. Gameplay</h3>
+            <p>The game is provided for entertainment purposes. Scores, progress, achievements, and other game data may be changed, reset, or removed during updates or maintenance.</p>
+          </li>
+          <li>
+            <h3>3. Intellectual Property</h3>
+            <p>The game's original name, logo, graphics, interface, code, and other original content are owned by the game developers or their respective rights holders. You may not copy, modify, distribute, or reproduce these materials without permission.</p>
+          </li>
+          <li>
+            <h3>4. Third-Party Content</h3>
+            <p>The game may use third-party services, libraries, fonts, or other resources. Their use is subject to the respective third-party terms and licenses.</p>
+          </li>
+          <li>
+            <h3>5. Availability</h3>
+            <p>We aim to keep the game available and working properly, but we do not guarantee that the game will always be available, error-free, or uninterrupted. Features may be changed, added, or removed at any time.</p>
+          </li>
+          <li>
+            <h3>6. User Feedback</h3>
+            <p>If you submit feedback, suggestions, or ideas about the game, you allow us to use them to improve the game without creating any obligation to compensate you.</p>
+          </li>
+          <li>
+            <h3>7. Privacy</h3>
+            <p>Your use of the game may be subject to our Privacy Policy, which explains how information is handled. Please review it separately.</p>
+          </li>
+          <li>
+            <h3>8. Updates to These Terms</h3>
+            <p>We may update these Terms & Conditions when necessary. Any changes will be posted on this page with an updated date.</p>
+          </li>
+          <li>
+            <h3>9. Contact Us</h3>
+            <p>If you have questions about these Terms & Conditions, please contact us:</p>
+            <p class="highlight-email">Email: support@blockrush.game</p>
+          </li>
+          <li>
+            <h3>10. Acceptance</h3>
+            <p>By continuing to use or play the game, you acknowledge that you have read and agreed to these Terms & Conditions. Thank you for playing BlockRush!</p>
+          </li>
+        </ol>
+
+        <!-- Developer Attribution -->
+        <div class="dev-attribution">
+          <div class="goz-inline">
+            <img src="goz_logo_dark.png" alt="Ghostofzenin" class="goz-logo-img-sm dark-only">
+            <img src="goz_logo_light.png" alt="Ghostofzenin" class="goz-logo-img-sm light-only">
+          </div>
+          <span class="dev-lbl">-Developers</span>
+        </div>
+      </div>
+
+      <div class="game-footer">
+        <div class="blockrush-logo mini">
+          <span class="sq sq-1"></span>
+          <span class="sq sq-2"></span>
+          <span class="sq sq-3"></span>
+          <span class="sq sq-4"></span>
+          <span class="sq sq-5"></span>
+          <span class="sq sq-6"></span>
+        </div>
+        <span class="brand-subtext">BlockRush</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 1: Victory / Reinforcement Screen (Figma Reniforcement / 597:270) -->
+  <div id="modal-victory" class="modal-overlay hidden">
+    <div class="victory-card">
+      <h1 class="victory-title">Amazing !!</h1>
+      <p class="victory-sub">You cleared Level <span id="victory-lvl">1</span></p>
+
+      <div class="stars-row">
+        <div class="star star-1">★</div>
+        <div class="star star-2">★</div>
+        <div class="star star-3">★</div>
+      </div>
+
+      <div class="victory-actions">
+        <button id="btn-retry" class="act-btn btn-retry">
+          <span>Retry</span>
+          <span class="key-badge">R</span>
+        </button>
+        <button id="btn-continue" class="act-btn btn-continue">
+          <span>Continue</span>
+          <span class="key-badge">Enter</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Help Dialog -->
+  <div id="modal-help" class="modal-overlay hidden">
+    <div class="help-card">
+      <h2>How to Play BlockRush</h2>
+      <p>Use <strong>Arrow Keys</strong> or <strong>WASD</strong> (or touch swipe) to slide block tiles across the board.</p>
+      <p>When two tiles with the same number touch, they <strong>merge into one</strong> with double the value!</p>
+      <button id="btn-close-help" class="act-btn btn-continue" style="margin-top: 20px;">Got it!</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
