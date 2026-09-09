@@ -1,227 +1,324 @@
+"""    Run with: main.py
+"""
+
+import json
 import math
+import os
 import random
+from array import array
 
 import pygame
 
-pygame.init()
 
+WIDTH, HEIGHT = 600, 720
+BOARD_X, BOARD_Y, BOARD_SIZE = 40, 160, 520
+ROWS = COLS = 4
+GAP = 12
+CELL = (BOARD_SIZE - GAP * (COLS + 1)) // COLS
 FPS = 60
-WIDTH, HEIGHT = 800, 800
-ROWS = 4
-COLS = 4
+SAVE_FILE = "2048_best_score.json"
 
-RECT_HEIGHT = HEIGHT // ROWS
-RECT_WIDTH = WIDTH // COLS
-
-OUTLINE_COLOR = (187, 173, 160)
-OUTLINE_THICKNESS = 10
-BACKGROUND_COLOR = (205, 192, 180)
-FONT_COLOR = (119, 110, 101)
-GAME_OVER_COLOR = (119, 110, 101)
-GAME_OVER_TEXT_COLOR = (249, 246, 242)
-
-FONT = pygame.font.SysFont("comicsans", 60, bold=True)
-GAME_OVER_FONT = pygame.font.SysFont("comicsans", 80, bold=True)
-MOVE_VEL = 20
-
-WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("2048")
+BACKGROUND = (250, 248, 239)
+BOARD = (187, 173, 160)
+EMPTY = (205, 193, 180)
+DARK = (119, 110, 101)
+LIGHT = (249, 246, 242)
+ACCENT = (237, 194, 46)
+TILE_COLORS = {
+    2: (238, 228, 218), 4: (237, 224, 200), 8: (242, 177, 121),
+    16: (245, 149, 99), 32: (246, 124, 95), 64: (246, 94, 59),
+    128: (237, 207, 114), 256: (237, 204, 97), 512: (237, 200, 80),
+    1024: (237, 197, 63), 2048: (237, 194, 46), 4096: (60, 58, 50),
+    8192: (45, 42, 37),
+}
 
 
-class Tile:
-    COLORS = {
-        2: (237, 229, 218),
-        4: (238, 225, 201),
-        8: (243, 178, 122),
-        16: (246, 150, 101),
-        32: (247, 124, 95),
-        64: (247, 95, 59),
-        128: (237, 208, 115),
-        256: (237, 204, 99),
-        512: (237, 202, 80),
-        1024: (237, 197, 63),
-        2048: (237, 194, 46),
-    }
+class Game2048:
+    def __init__(self):
+        pygame.init()
+        try:
+            pygame.mixer.init()
+        except pygame.error:
+            pass
+        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        pygame.display.set_caption("2048")
+        self.clock = pygame.time.Clock()
+        self.title_font = pygame.font.Font(None, 72)
+        self.score_font = pygame.font.Font(None, 26)
+        self.ui_font = pygame.font.Font(None, 30)
+        self.large_font = pygame.font.Font(None, 58)
+        self.best_score = self.load_best_score()
+        self.move_sound = self.make_tone(400, 0.045)
+        self.merge_sound = self.make_tone(660, 0.08)
+        self.state = "start"
+        self.reset()
 
-    def __init__(self, value, row, col):
-        self.value = value
-        self.row = row
-        self.col = col
-        self.x = col * RECT_WIDTH
-        self.y = row * RECT_HEIGHT
+    def load_best_score(self):
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), SAVE_FILE)
+        try:
+            with open(path, "r", encoding="utf-8") as file:
+                return int(json.load(file).get("best_score", 0))
+        except (FileNotFoundError, OSError, ValueError, json.JSONDecodeError):
+            return 0
 
-    def get_color(self):
-        return self.COLORS.get(self.value, (60, 58, 50))
+    def save_best_score(self):
+        path = os.path.join(os.path.dirname(os.path.abspath(__file__)), SAVE_FILE)
+        try:
+            with open(path, "w", encoding="utf-8") as file:
+                json.dump({"best_score": self.best_score}, file)
+        except OSError:
+            pass
 
-    def draw(self, window):
-        pygame.draw.rect(window, self.get_color(), (self.x, self.y, RECT_WIDTH, RECT_HEIGHT))
-        text = FONT.render(str(self.value), True, FONT_COLOR)
-        window.blit(text, (self.x + (RECT_WIDTH - text.get_width()) // 2,
-                           self.y + (RECT_HEIGHT - text.get_height()) // 2))
+    def make_tone(self, frequency, duration):
+        if not pygame.mixer.get_init():
+            return None
+        rate = 22050
+        samples = array("h", (int(6500 * math.sin(2 * math.pi * frequency * i / rate))
+                              for i in range(int(rate * duration))))
+        return pygame.mixer.Sound(buffer=samples)
 
-    def set_pos(self, use_ceil=False):
-        if use_ceil:
-            self.row = math.ceil(self.y / RECT_HEIGHT)
-            self.col = math.ceil(self.x / RECT_WIDTH)
+    @staticmethod
+    def play(sound):
+        if sound:
+            sound.play()
+
+    def reset(self):
+        self.board = [[0] * COLS for _ in range(ROWS)]
+        self.score = 0
+        self.animations = []
+        self.animation_time = 0.0
+        self.spawn_cell = None
+        self.spawn_time = 0.0
+        self.won = False
+        self.add_random_tile()
+        self.add_random_tile()
+
+    def add_random_tile(self):
+        empty = [(r, c) for r in range(ROWS) for c in range(COLS) if not self.board[r][c]]
+        if not empty:
+            return
+        row, col = random.choice(empty)
+        self.board[row][col] = 4 if random.random() < 0.1 else 2
+        self.spawn_cell, self.spawn_time = (row, col), 0.14
+
+    def cell_rect(self, row, col):
+        return pygame.Rect(BOARD_X + GAP + col * (CELL + GAP), BOARD_Y + GAP + row * (CELL + GAP), CELL, CELL)
+
+    def tile_color(self, value):
+        return TILE_COLORS.get(value, (45, 42, 37))
+
+    def draw_text_center(self, text, font, center, color):
+        rendered = font.render(text, True, color)
+        self.screen.blit(rendered, rendered.get_rect(center=center))
+
+    def draw_button(self, rect, label):
+        mouse_inside = rect.collidepoint(pygame.mouse.get_pos())
+        pygame.draw.rect(self.screen, (143, 122, 102) if mouse_inside else DARK, rect, border_radius=8)
+        self.draw_text_center(label, self.ui_font, rect.center, LIGHT)
+
+    def draw_tile(self, value, row, col, scale=1.0, offset=(0, 0)):
+        rect = self.cell_rect(row, col).move(offset)
+        if scale != 1:
+            rect = pygame.Rect(0, 0, max(1, int(rect.width * scale)), max(1, int(rect.height * scale)))
+            rect.center = (self.cell_rect(row, col).centerx + offset[0], self.cell_rect(row, col).centery + offset[1])
+        pygame.draw.rect(self.screen, self.tile_color(value), rect, border_radius=7)
+        size = 52 if value < 128 else 46 if value < 1024 else 38 if value < 10000 else 31
+        font = pygame.font.Font(None, size)
+        color = DARK if value in (2, 4) else LIGHT
+        self.draw_text_center(str(value), font, rect.center, color)
+
+    def draw_board(self):
+        pygame.draw.rect(self.screen, BOARD, (BOARD_X, BOARD_Y, BOARD_SIZE, BOARD_SIZE), border_radius=10)
+        for row in range(ROWS):
+            for col in range(COLS):
+                pygame.draw.rect(self.screen, EMPTY, self.cell_rect(row, col), border_radius=7)
+        if self.animation_time > 0:
+            progress = 1 - self.animation_time / 0.12
+            for value, source, destination in self.animations:
+                sr, sc = source
+                dr, dc = destination
+                offset = ((sc - dc) * (CELL + GAP) * (1 - progress), (sr - dr) * (CELL + GAP) * (1 - progress))
+                self.draw_tile(value, dr, dc, offset=offset)
+            return
+        for row in range(ROWS):
+            for col in range(COLS):
+                if self.board[row][col]:
+                    scale = 1.0
+                    if self.spawn_cell == (row, col) and self.spawn_time > 0:
+                        scale = 0.65 + 0.35 * (1 - self.spawn_time / 0.14)
+                    self.draw_tile(self.board[row][col], row, col, scale)
+
+    def draw_header(self):
+        self.draw_text_center("2048", self.title_font, (120, 58), DARK)
+        self.draw_text_center("Join the numbers", self.ui_font, (125, 104), DARK)
+        score_box = pygame.Rect(320, 30, 105, 70)
+        best_box = pygame.Rect(435, 30, 125, 70)
+        for rect, label, value in ((score_box, "SCORE", self.score), (best_box, "BEST", self.best_score)):
+            pygame.draw.rect(self.screen, BOARD, rect, border_radius=7)
+            self.draw_text_center(label, self.score_font, (rect.centerx, rect.y + 16), LIGHT)
+            self.draw_text_center(str(value), self.score_font, (rect.centerx, rect.y + 47), LIGHT)
+        self.restart_button = pygame.Rect(440, 105, 120, 36)
+        self.draw_button(self.restart_button, "Restart")
+
+    def draw_overlay(self, heading, message, button_label):
+        overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        overlay.fill((238, 228, 218, 205))
+        self.screen.blit(overlay, (0, 0))
+        self.draw_text_center(heading, self.large_font, (WIDTH // 2, 300), DARK)
+        self.draw_text_center(message, self.ui_font, (WIDTH // 2, 350), DARK)
+        self.action_button = pygame.Rect(WIDTH // 2 - 95, 390, 190, 52)
+        self.draw_button(self.action_button, button_label)
+
+    def draw(self):
+        self.screen.fill(BACKGROUND)
+        if self.state == "start":
+            self.draw_text_center("2048", self.title_font, (WIDTH // 2, 200), DARK)
+            self.draw_text_center("Slide tiles. Match numbers. Reach 2048.", self.ui_font, (WIDTH // 2, 270), DARK)
+            self.action_button = pygame.Rect(WIDTH // 2 - 100, 330, 200, 54)
+            self.draw_button(self.action_button, "Start Game")
+            self.draw_text_center("Use arrow keys to move", self.score_font, (WIDTH // 2, 425), DARK)
         else:
-            self.row = math.floor(self.y / RECT_HEIGHT)
-            self.col = math.floor(self.x / RECT_WIDTH)
+            self.draw_header()
+            self.draw_board()
+            if self.state == "won":
+                self.draw_overlay("You made 2048!", "A brilliant move.", "Keep Playing")
+            elif self.state == "lost":
+                self.draw_overlay("Game Over", f"Score: {self.score}", "Play Again")
+        pygame.display.flip()
 
-    def move(self, delta):
-        self.x += delta[0]
-        self.y += delta[1]
-
-
-def draw_grid(window):
-    for row in range(1, ROWS):
-        pygame.draw.line(window, OUTLINE_COLOR, (0, row * RECT_HEIGHT), (WIDTH, row * RECT_HEIGHT), OUTLINE_THICKNESS)
-    for col in range(1, COLS):
-        pygame.draw.line(window, OUTLINE_COLOR, (col * RECT_WIDTH, 0), (col * RECT_WIDTH, HEIGHT), OUTLINE_THICKNESS)
-    pygame.draw.rect(window, OUTLINE_COLOR, (0, 0, WIDTH, HEIGHT), OUTLINE_THICKNESS)
-
-
-def draw(window, tiles, lost=False):
-    window.fill(BACKGROUND_COLOR)
-    for tile in tiles.values():
-        tile.draw(window)
-    draw_grid(window)
-    if lost:
-        draw_game_over(window)
-    pygame.display.update()
-
-
-def draw_game_over(window):
-    overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
-    overlay.fill((*GAME_OVER_COLOR, 150))
-    window.blit(overlay, (0, 0))
-    text = GAME_OVER_FONT.render("Game Over", True, GAME_OVER_TEXT_COLOR)
-    window.blit(text, ((WIDTH - text.get_width()) // 2, (HEIGHT - text.get_height()) // 2))
-
-
-def get_random_pos(tiles):
-    while True:
-        row, col = random.randrange(ROWS), random.randrange(COLS)
-        if (row, col) not in tiles:
-            return row, col
-
-
-def can_merge(tiles):
-    for row in range(ROWS):
-        for col in range(COLS):
-            tile = tiles.get((row, col))
-            if not tile:
-                return True
-            right_tile = tiles.get((row, col + 1))
-            down_tile = tiles.get((row + 1, col))
-            if right_tile and tile.value == right_tile.value:
-                return True
-            if down_tile and tile.value == down_tile.value:
-                return True
-    return False
-
-
-def is_game_over(tiles):
-    return len(tiles) == ROWS * COLS and not can_merge(tiles)
-
-
-def get_board_state(tiles):
-    return {position: tile.value for position, tile in tiles.items()}
-
-
-def move_tiles(window, direction, tiles, clock):
-    previous_state = get_board_state(tiles)
-    updated, merged_tiles = True, set()
-    if direction == "left":
-        sort_func, reverse, delta, boundary_check = lambda tile: tile.col, False, (-MOVE_VEL, 0), lambda tile: tile.col == 0
-        get_next_tile = lambda tile: tiles.get((tile.row, tile.col - 1))
-        merge_check = lambda tile, next_tile: tile.x > next_tile.x + MOVE_VEL
-        move_check, use_ceil = lambda tile, next_tile: tile.x > next_tile.x + RECT_WIDTH + MOVE_VEL, True
-    elif direction == "right":
-        sort_func, reverse, delta, boundary_check = lambda tile: tile.col, True, (MOVE_VEL, 0), lambda tile: tile.col == COLS - 1
-        get_next_tile = lambda tile: tiles.get((tile.row, tile.col + 1))
-        merge_check = lambda tile, next_tile: tile.x < next_tile.x - MOVE_VEL
-        move_check, use_ceil = lambda tile, next_tile: tile.x + RECT_WIDTH + MOVE_VEL < next_tile.x, False
-    elif direction == "up":
-        sort_func, reverse, delta, boundary_check = lambda tile: tile.row, False, (0, -MOVE_VEL), lambda tile: tile.row == 0
-        get_next_tile = lambda tile: tiles.get((tile.row - 1, tile.col))
-        merge_check = lambda tile, next_tile: tile.y > next_tile.y + MOVE_VEL
-        move_check, use_ceil = lambda tile, next_tile: tile.y > next_tile.y + RECT_HEIGHT + MOVE_VEL, True
-    elif direction == "down":
-        sort_func, reverse, delta, boundary_check = lambda tile: tile.row, True, (0, MOVE_VEL), lambda tile: tile.row == ROWS - 1
-        get_next_tile = lambda tile: tiles.get((tile.row + 1, tile.col))
-        merge_check = lambda tile, next_tile: tile.y < next_tile.y - MOVE_VEL
-        move_check, use_ceil = lambda tile, next_tile: tile.y + RECT_HEIGHT + MOVE_VEL < next_tile.y, False
-    else:
-        return "continue"
-
-    while updated:
-        clock.tick(FPS)
-        updated = False
-        sorted_tiles = sorted(tiles.values(), key=sort_func, reverse=reverse)
-        for index, tile in enumerate(sorted_tiles):
-            if boundary_check(tile):
-                continue
-            next_tile = get_next_tile(tile)
-            if not next_tile:
-                tile.move(delta)
-            elif tile.value == next_tile.value and tile not in merged_tiles and next_tile not in merged_tiles:
-                if merge_check(tile, next_tile):
-                    tile.move(delta)
-                else:
-                    next_tile.value *= 2
-                    sorted_tiles.pop(index)
-                    merged_tiles.add(next_tile)
-            elif move_check(tile, next_tile):
-                tile.move(delta)
+    def transform_line(self, line, positions):
+        """Compress and merge one row/column; return values, point gain, and moves."""
+        occupied = [(value, pos) for value, pos in zip(line, positions) if value]
+        result, motions, gained, index = [], [], 0, 0
+        while index < len(occupied):
+            value, source = occupied[index]
+            destination = positions[len(result)]
+            if index + 1 < len(occupied) and occupied[index + 1][0] == value:
+                new_value = value * 2
+                result.append(new_value)
+                motions.extend([(value, source, destination), (value, occupied[index + 1][1], destination)])
+                gained += new_value
+                index += 2
             else:
-                continue
-            tile.set_pos(use_ceil)
-            updated = True
-        update_tiles(window, tiles, sorted_tiles)
-    if get_board_state(tiles) == previous_state:
-        return "lost" if is_game_over(tiles) else "continue"
-    return end_move(tiles)
+                result.append(value)
+                motions.append((value, source, destination))
+                index += 1
+        return result + [0] * (COLS - len(result)), gained, motions
 
+    def move(self, direction):
+        if self.animation_time > 0 or self.state not in ("playing", "won"):
+            return
+        old = [row[:] for row in self.board]
+        new = [[0] * COLS for _ in range(ROWS)]
+        animations, gained = [], 0
+        for fixed in range(ROWS):
+            if direction in ("left", "right"):
+                positions = [(fixed, col) for col in (range(COLS) if direction == "left" else range(COLS - 1, -1, -1))]
+            else:
+                positions = [(row, fixed) for row in (range(ROWS) if direction == "up" else range(ROWS - 1, -1, -1))]
+            values = [old[row][col] for row, col in positions]
+            transformed, points, motions = self.transform_line(values, positions)
+            gained += points
+            animations.extend(motions)
+            for value, (row, col) in zip(transformed, positions):
+                new[row][col] = value
+        if new == old:
+            if not self.can_move():
+                self.state = "lost"
+            return
+        self.board, self.score = new, self.score + gained
+        if self.score > self.best_score:
+            self.best_score = self.score
+            self.save_best_score()
+        self.animations, self.animation_time = animations, 0.12
+        self.spawn_cell = None
+        self.play(self.merge_sound if gained else self.move_sound)
 
-def end_move(tiles):
-    if is_game_over(tiles):
-        return "lost"
-    row, col = get_random_pos(tiles)
-    tiles[(row, col)] = Tile(random.choice([2, 4]), row, col)
-    return "lost" if is_game_over(tiles) else "continue"
+    def can_move(self):
+        for row in range(ROWS):
+            for col in range(COLS):
+                value = self.board[row][col]
+                if not value:
+                    return True
+                if col < COLS - 1 and value == self.board[row][col + 1]:
+                    return True
+                if row < ROWS - 1 and value == self.board[row + 1][col]:
+                    return True
+        return False
 
+    def update(self, delta_time):
+        if self.animation_time > 0:
+            self.animation_time = max(0, self.animation_time - delta_time)
+            if self.animation_time == 0:
+                self.add_random_tile()
+                if any(value >= 2048 for row in self.board for value in row) and not self.won:
+                    self.won, self.state = True, "won"
+                elif not self.can_move():
+                    self.state = "lost"
+        self.spawn_time = max(0, self.spawn_time - delta_time)
 
-def update_tiles(window, tiles, sorted_tiles):
-    tiles.clear()
-    for tile in sorted_tiles:
-        tiles[(tile.row, tile.col)] = tile
-    draw(window, tiles)
+    def start_game(self):
+        self.reset()
+        self.state = "playing"
 
-
-def generate_tiles():
-    tiles = {}
-    for _ in range(2):
-        row, col = get_random_pos(tiles)
-        tiles[(row, col)] = Tile(2, row, col)
-    return tiles
-
-
-def main(window):
-    clock = pygame.time.Clock()
-    run, lost, tiles = True, False, generate_tiles()
-    while run:
-        clock.tick(FPS)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                break
-            if event.type == pygame.KEYDOWN and not lost:
+    def handle_event(self, event):
+        if event.type == pygame.QUIT:
+            return False
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.state == "start" and self.action_button.collidepoint(event.pos):
+                self.start_game()
+            elif self.state in ("playing", "won", "lost") and self.restart_button.collidepoint(event.pos):
+                self.start_game()
+            elif self.state == "lost" and self.action_button.collidepoint(event.pos):
+                self.start_game()
+            elif self.state == "won" and self.action_button.collidepoint(event.pos):
+                self.state = "playing"
+            return True
+        if event.type != pygame.KEYDOWN:
+            return True
+        if event.key == pygame.K_ESCAPE:
+            return False
+        if self.state == "start" and event.key in (pygame.K_RETURN, pygame.K_SPACE):
+            self.start_game()
+        elif self.state == "lost" and event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_r):
+            self.start_game()
+        elif self.state == "won" and event.key in (pygame.K_RETURN, pygame.K_SPACE):
+            self.state = "playing"
+        elif self.state in ("playing", "won"):
+            if event.key == pygame.K_r:
+                self.start_game()
+            else:
                 directions = {pygame.K_LEFT: "left", pygame.K_RIGHT: "right", pygame.K_UP: "up", pygame.K_DOWN: "down"}
                 if event.key in directions:
-                    lost = move_tiles(window, directions[event.key], tiles, clock) == "lost"
-        draw(window, tiles, lost)
-    pygame.quit()
+                    self.move(directions[event.key])
+        return True
+
+    def run(self):
+        running = True
+        while running:
+            delta_time = self.clock.tick(FPS) / 1000
+            for event in pygame.event.get():
+                running = self.handle_event(event) and running
+            self.update(delta_time)
+            self.draw()
+        pygame.quit()
 
 
 if __name__ == "__main__":
-    main(WINDOW)
+    Game2048().run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
