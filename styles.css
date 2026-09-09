@@ -967,3 +967,152 @@ body {
   .rush-progress-bar { width: 90px; }
   .support-content { padding: 20px; }
 }
+
+/* Crisp visual pass: match the geometric Figma surfaces without soft gradients. */
+html, body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+button,
+.menu-btn,
+.tool-btn,
+.icon-btn,
+.tile-card,
+.g-tile,
+.pill-badge,
+.board-grid {
+  border-radius: 8px;
+}
+
+button:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 4px;
+}
+
+.menu-btn,
+.tool-btn,
+.icon-btn,
+.pill-badge {
+  box-shadow: none;
+}
+
+.menu-btn:hover,
+.tool-btn:hover,
+.icon-btn:hover {
+  transform: translateY(-2px);
+  background-color: var(--card-hover);
+}
+
+.menu-btn:active,
+.tool-btn:active,
+.icon-btn:active {
+  transform: translateY(0);
+}
+
+.board-grid {
+  width: min(82vw, 520px);
+  height: auto;
+  aspect-ratio: 1;
+  padding: 12px;
+  gap: 12px;
+  background: var(--card-bg);
+  border: 0;
+  box-shadow: none;
+}
+
+.board-grid.grid-3x4 {
+  aspect-ratio: 3 / 4;
+}
+
+.g-tile {
+  border-radius: 6px;
+  font-size: clamp(24px, 5vw, 46px);
+  box-shadow: none;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.g-tile.empty-cell {
+  background: #2e2f42 !important;
+}
+
+.g-tile.t-2 { background: var(--tile-2); }
+.g-tile.t-4 { background: var(--tile-4); }
+.g-tile.t-8 { background: var(--tile-8); }
+.g-tile.t-16 { background: var(--tile-16); }
+.g-tile.t-32 { background: var(--tile-32); }
+.g-tile.t-64 { background: var(--tile-64); }
+.g-tile.t-128 { background: var(--tile-128); }
+.g-tile.t-256 { background: var(--tile-256); }
+.g-tile.t-512 { background: var(--tile-512); }
+.g-tile.t-1024 { background: var(--tile-1024); }
+.g-tile.t-2048 { background: var(--tile-2048); }
+
+.g-tile:not(.empty-cell):hover {
+  filter: brightness(1.08);
+}
+
+.tile-card,
+.pos-1,
+.pos-2,
+.pos-3,
+.pos-4,
+.pos-5,
+.pos-6,
+.pos-7,
+.pos-8,
+.pos-9,
+.pos-10 {
+  box-shadow: none;
+}
+
+.pos-1 { background: var(--tile-2); }
+.pos-2 { background: var(--tile-2048); }
+.pos-3 { background: var(--tile-4); }
+.pos-4 { background: var(--tile-16); }
+.pos-5 { background: var(--tile-16); }
+.pos-6 { background: var(--tile-64); }
+.pos-7 { background: var(--tile-256); }
+.pos-8 { background: var(--tile-256); }
+.pos-9 { background: var(--tile-1024); }
+.pos-10 { background: var(--tile-8); }
+
+.timer-sidebar {
+  min-width: 72px;
+}
+
+.timer-track {
+  background: #2e2f42;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 720px) {
+  .game-wrapper {
+    gap: 18px;
+    padding: 12px;
+  }
+
+  .game-header {
+    gap: 8px;
+  }
+
+  .pill-badge {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .header-right {
+    gap: 6px;
+  }
+
+  .icon-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .board-grid {
+    width: min(82vw, 420px);
+    padding: 9px;
+    gap: 9px;
+  }
+}
