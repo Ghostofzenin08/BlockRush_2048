@@ -540,6 +540,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Keybindings (Keyboard Controls)
   window.addEventListener('keydown', (e) => {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key) && currentScreen === 'game') {
+      e.preventDefault();
+    }
+
     if (modalVictory && !modalVictory.classList.contains('hidden')) {
       if (e.key.toLowerCase() === 'r') btnRetry.click();
       if (e.key === 'Enter') btnContinue.click();
@@ -554,7 +558,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const keyMap = { ArrowUp: 'up', w: 'up', W: 'up', ArrowDown: 'down', s: 'down', S: 'down', ArrowLeft: 'left', a: 'left', A: 'left', ArrowRight: 'right', d: 'right', D: 'right' };
-    if (keyMap[e.key]) handleDirection(keyMap[e.key]);
+    if (keyMap[e.key]) {
+      e.preventDefault();
+      handleDirection(keyMap[e.key]);
+    }
   });
 
   // Touch / Swipe Gesture Controls for Mobile
