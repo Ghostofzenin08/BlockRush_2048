@@ -148,6 +148,12 @@
           <div class="pill-badge level-tag">
             <span id="current-level-text">Level 1</span>
           </div>
+          <div class="pill-badge score-badge">
+            <span>SCORE: </span><span id="score-val" class="badge-value">0</span>
+          </div>
+          <div class="pill-badge best-badge">
+            <span>BEST: </span><span id="best-score-val" class="badge-value">0</span>
+          </div>
         </div>
 
         <div class="header-right">
@@ -408,13 +414,40 @@
           <span class="dev-lbl">-Developers</span>
         </div>
 
-        <!-- Query Form Section (Figma 622:1226 & 622:1229) -->
-        <form id="support-query-form" class="query-form">
-          <textarea id="query-input" class="query-textarea" placeholder="Write your Query here ..." required></textarea>
-          <button type="submit" class="submit-query-btn">Submit</button>
-        </form>
-        <div id="query-toast" class="toast hidden">✓ Your query has been submitted successfully!</div>
+        <!-- Section 1: Contact Us & Query Form -->
+        <div id="support-sec-contact" class="support-section">
+          <h3>Contact Us & Feedback</h3>
+          <p>Have suggestions or encountered an issue? Send us a message below.</p>
+          <form id="support-query-form" class="query-form">
+            <textarea class="query-textarea" placeholder="Type your query or feedback here..." required></textarea>
+            <button type="submit" class="submit-query-btn">Send Message</button>
+          </form>
+          <div id="query-toast" class="toast hidden">Thank you! Your feedback has been sent.</div>
+        </div>
 
+        <!-- Section 2: Game Rules -->
+        <div id="support-sec-rules" class="support-section">
+          <h3>Game Rules & Mechanics</h3>
+          <p>1. Swipe or press Arrow Keys / WASD to move blocks in four directions.</p>
+          <p>2. Matching adjacent blocks merge into a block of double value.</p>
+          <p>3. Reach the target block tile to complete the level!</p>
+        </div>
+
+        <!-- Section 3: FAQ -->
+        <div id="support-sec-faq" class="support-section">
+          <h3>Frequently Asked Questions</h3>
+          <p><strong>Q: Is BlockRush free to play?</strong><br>A: Yes! BlockRush is 100% free to play.</p>
+          <p><strong>Q: Can I save my high score?</strong><br>A: High scores are automatically saved locally on your device.</p>
+        </div>
+
+        <!-- Developer Attribution -->
+        <div class="dev-attribution">
+          <div class="goz-inline">
+            <img src="goz_logo_dark.png" alt="Ghostofzenin" class="goz-logo-img-sm dark-only">
+            <img src="goz_logo_light.png" alt="Ghostofzenin" class="goz-logo-img-sm light-only">
+          </div>
+          <span class="dev-lbl">-Developers</span>
+        </div>
       </div>
 
       <div class="game-footer">
@@ -431,22 +464,14 @@
     </div>
   </div>
 
-  <!-- Screen 7: BlockDocs Terms & Conditions (Figma support - T&C / 622:1365) -->
+  <!-- Screen 7: Terms & Conditions Screen -->
   <div id="screen-terms" class="screen">
     <div class="support-wrapper">
       <div class="support-header">
         <button id="btn-back-terms" class="icon-btn back-btn">
           <svg viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
         </button>
-        <div class="blockdocs-brand">
-          <div class="blockrush-logo mini">
-            <span class="sq sq-1"></span>
-            <span class="sq sq-2"></span>
-            <span class="sq sq-3"></span>
-            <span class="sq sq-4"></span>
-            <span class="sq sq-5"></span>
-            <span class="sq sq-6"></span>
-          </div>
+        <div class="doc-header">
           <h2>BlockDocs - T&C</h2>
         </div>
       </div>
@@ -524,11 +549,11 @@
     </div>
   </div>
 
-  <!-- Modal 1: Victory / Reinforcement Screen (Figma Reniforcement / 597:270) -->
+  <!-- Modal 1: Victory / Reinforcement Screen (Figma Reinforcement / 597:270) -->
   <div id="modal-victory" class="modal-overlay hidden">
     <div class="victory-card">
-      <h1 class="victory-title">Amazing !!</h1>
-      <p class="victory-sub">You cleared Level <span id="victory-lvl">1</span></p>
+      <h1 class="victory-title">You made 2048!</h1>
+      <p class="victory-sub">A brilliant move. Level <span id="victory-lvl">1</span></p>
 
       <div class="stars-row">
         <div class="star star-1">★</div>
@@ -542,14 +567,29 @@
           <span class="key-badge">R</span>
         </button>
         <button id="btn-continue" class="act-btn btn-continue">
-          <span>Continue</span>
+          <span>Keep Playing</span>
           <span class="key-badge">Enter</span>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Modal 2: Help Dialog -->
+  <!-- Modal 2: Game Over Screen (Matching main.py Game Over overlay) -->
+  <div id="modal-gameover" class="modal-overlay hidden">
+    <div class="victory-card gameover-card">
+      <h1 class="victory-title" style="color: var(--accent-orange);">Game Over</h1>
+      <p class="victory-sub">Score: <span id="gameover-score">0</span></p>
+
+      <div class="victory-actions">
+        <button id="btn-gameover-retry" class="act-btn btn-retry">
+          <span>Play Again</span>
+          <span class="key-badge">R</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Help Dialog -->
   <div id="modal-help" class="modal-overlay hidden">
     <div class="help-card">
       <h2>How to Play BlockRush</h2>

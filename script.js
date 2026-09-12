@@ -14,7 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Modals
   const modalVictory = document.getElementById('modal-victory');
+  const modalGameOver = document.getElementById('modal-gameover');
   const modalHelp = document.getElementById('modal-help');
+  const gameoverScore = document.getElementById('gameover-score');
+  const btnGameOverRetry = document.getElementById('btn-gameover-retry');
 
   // Navigation Buttons & Footer Links
   const btnStart = document.getElementById('btn-start');
@@ -46,6 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const challengeTimerContainer = document.getElementById('challenge-timer-container');
   const timerFill = document.getElementById('timer-fill');
   const timerDisplay = document.getElementById('timer-display');
+  const scoreValElem = document.getElementById('score-val');
+  const bestScoreValElem = document.getElementById('best-score-val');
 
   // Victory Modal Actions
   const victoryLvl = document.getElementById('victory-lvl');
@@ -57,30 +62,51 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentScreen = 'menu';
   let gameMode = 'classic'; // 'classic', 'challenge', 'playground'
   let currentLevel = 1;
-  let targetValue = 16;
-  let gridRows = 2;
-  let gridCols = 2;
+  let targetValue = 2048;
+  let gridRows = 4;
+  let gridCols = 4;
   let board = [];
+  let currentScore = 0;
+  let bestScore = loadBestScore();
+  let hasWon = false;
   let timerInterval = null;
   let timeLeft = 10;
   let soundEnabled = true;
+
+  function loadBestScore() {
+    try {
+      const saved = localStorage.getItem('blockrush_best_score');
+      return saved ? parseInt(saved, 10) || 0 : 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  function saveBestScore() {
+    try {
+      localStorage.setItem('blockrush_best_score', bestScore.toString());
+    } catch (e) {}
+  }
+
+  function updateScoreDisplay() {
+    if (scoreValElem) scoreValElem.textContent = currentScore;
+    if (bestScoreValElem) bestScoreValElem.textContent = bestScore;
+  }
 
   // Dual-Phase Loader Sequence (Matching Figma Loader_01 & Loader_02)
   const loaderPhase1 = document.getElementById('loader-phase-1');
   const loaderPhase2 = document.getElementById('loader-phase-2');
 
-  // Phase 1 (Ghostofzenin Intro) -> Phase 2 (BlockRush 8-block U-Shape Animated Grid)
   setTimeout(() => {
     if (loaderPhase1) loaderPhase1.classList.remove('active');
     if (loaderPhase2) loaderPhase2.classList.add('active');
   }, 1200);
 
-  // Phase 2 -> Main Menu
   setTimeout(() => {
     switchScreen('menu');
   }, 2800);
 
-  // Native Web Audio API Synthesizer (Zero external file dependencies)
+  // Native Web Audio API Synthesizer (Matching main.py 400Hz move & 660Hz merge tones)
   class WebAudioSynthesizer {
     constructor() {
       this.ctx = null;
@@ -104,16 +130,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(160, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(320, this.ctx.currentTime + 0.08);
+      osc.frequency.setValueAtTime(400, this.ctx.currentTime);
 
       gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.045);
 
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start();
-      osc.stop(this.ctx.currentTime + 0.08);
+      osc.stop(this.ctx.currentTime + 0.045);
     }
 
     playMerge(value) {
@@ -124,18 +149,15 @@ document.addEventListener('DOMContentLoaded', () => {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'triangle';
-
-      const baseFreq = 220 * Math.pow(1.12, Math.log2(value || 2));
-      osc.frequency.setValueAtTime(baseFreq, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.4, this.ctx.currentTime + 0.15);
+      osc.frequency.setValueAtTime(660, this.ctx.currentTime);
 
       gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.18);
+      gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.08);
 
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start();
-      osc.stop(this.ctx.currentTime + 0.18);
+      osc.stop(this.ctx.currentTime + 0.08);
     }
 
     playClick() {
@@ -177,6 +199,28 @@ document.addEventListener('DOMContentLoaded', () => {
         gain.connect(this.ctx.destination);
         osc.start(this.ctx.currentTime + idx * 0.08);
         osc.stop(this.ctx.currentTime + idx * 0.08 + 0.25);
+      });
+    }
+
+    playGameOver() {
+      if (!soundEnabled) return;
+      this.init();
+      if (!this.ctx) return;
+
+      const notes = [300, 250, 200, 150];
+      notes.forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.1);
+
+        gain.gain.setValueAtTime(0.15, this.ctx.currentTime + idx * 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + idx * 0.1 + 0.15);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(this.ctx.currentTime + idx * 0.1);
+        osc.stop(this.ctx.currentTime + idx * 0.1 + 0.15);
       });
     }
   }
@@ -280,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     audioSynth.playClick();
     gameMode = 'classic';
     currentLevel = 1;
-    startNewGame(2, 2, 16, 'Challenge', '0/10', 'Level 1');
+    startNewGame(4, 4, 2048, 'Classic 2048', '0/10', 'Level 1');
   });
 
   btnChallenge.addEventListener('click', () => {
@@ -347,26 +391,36 @@ document.addEventListener('DOMContentLoaded', () => {
   // Victory Button Listeners
   btnRetry.addEventListener('click', () => {
     audioSynth.playClick();
-    modalVictory.classList.add('hidden');
+    if (modalVictory) modalVictory.classList.add('hidden');
     startNewGame(gridRows, gridCols, targetValue, gameModeTitle.textContent, levelNum.textContent, currentLevelText.textContent);
   });
 
   btnContinue.addEventListener('click', () => {
     audioSynth.playClick();
-    modalVictory.classList.add('hidden');
-    currentLevel++;
-    if (gridRows === 2 && gridCols === 2) {
-      startNewGame(3, 4, 32, 'Challenge', `${currentLevel}/10`, `Level ${currentLevel}`);
-    } else {
-      startNewGame(4, 4, 64, 'Challenge', `${currentLevel}/10`, `Level ${currentLevel}`);
-    }
+    if (modalVictory) modalVictory.classList.add('hidden');
   });
+
+  // Game Over Button Listeners
+  if (btnGameOverRetry) {
+    btnGameOverRetry.addEventListener('click', () => {
+      audioSynth.playClick();
+      if (modalGameOver) modalGameOver.classList.add('hidden');
+      startNewGame(gridRows, gridCols, targetValue, gameModeTitle.textContent, levelNum.textContent, currentLevelText.textContent);
+    });
+  }
 
   // Keybindings (Keyboard Controls)
   window.addEventListener('keydown', (e) => {
-    if (!modalVictory.classList.contains('hidden')) {
+    if (modalVictory && !modalVictory.classList.contains('hidden')) {
       if (e.key.toLowerCase() === 'r') btnRetry.click();
       if (e.key === 'Enter') btnContinue.click();
+      return;
+    }
+
+    if (modalGameOver && !modalGameOver.classList.contains('hidden')) {
+      if (e.key.toLowerCase() === 'r' || e.key === 'Enter' || e.key === ' ') {
+        if (btnGameOverRetry) btnGameOverRetry.click();
+      }
       return;
     }
 
@@ -391,11 +445,57 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Touch / Swipe Gesture Controls for Mobile
+  let touchStartX = 0;
+  let touchStartY = 0;
+  gameBoard.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  gameBoard.addEventListener('touchend', (e) => {
+    if (currentScreen !== 'game') return;
+    if (e.changedTouches.length === 1) {
+      const deltaX = e.changedTouches[0].clientX - touchStartX;
+      const deltaY = e.changedTouches[0].clientY - touchStartY;
+      const minSwipeDistance = 30;
+
+      let res = { moved: false, merges: [] };
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX > minSwipeDistance) res = move('right');
+        else if (deltaX < -minSwipeDistance) res = move('left');
+      } else {
+        if (deltaY > minSwipeDistance) res = move('down');
+        else if (deltaY < -minSwipeDistance) res = move('up');
+      }
+
+      if (res.moved) {
+        spawnRandomTile();
+        renderBoard(res.merges);
+        if (res.merges && res.merges.length > 0) {
+          const topVal = Math.max(...res.merges.map(m => m.val));
+          audioSynth.playMerge(topVal);
+        } else {
+          audioSynth.playMove();
+        }
+        checkGameState();
+      }
+    }
+  }, { passive: true });
+
   // START GAME ENGINE LOGIC
   function startNewGame(rows, cols, target, modeLabel, levelVal, levelTag) {
     gridRows = rows;
     gridCols = cols;
     targetValue = target;
+    currentScore = 0;
+    hasWon = false;
+    updateScoreDisplay();
+
+    if (modalVictory) modalVictory.classList.add('hidden');
+    if (modalGameOver) modalGameOver.classList.add('hidden');
 
     gameModeTitle.textContent = modeLabel;
     levelNum.textContent = levelVal;
@@ -437,8 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (timeLeft <= 0) {
         timeLeft = 0;
         clearInterval(timerInterval);
-        alert('Time is up! Try again.');
-        startNewGame(gridRows, gridCols, targetValue, gameModeTitle.textContent, levelNum.textContent, currentLevelText.textContent);
+        triggerGameOver();
       }
       updateTimerUI();
     }, 100);
@@ -521,7 +620,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Spawn Random Tile
+  // Spawn Random Tile (10% chance of tile 4, 90% tile 2 - matching main.py)
   function spawnRandomTile() {
     const emptyCells = [];
     for (let r = 0; r < gridRows; r++) {
@@ -533,7 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (emptyCells.length > 0) {
       const idx = Math.floor(Math.random() * emptyCells.length);
       const cell = emptyCells[idx];
-      board[cell.r][cell.c] = Math.random() < 0.8 ? 2 : 4;
+      board[cell.r][cell.c] = Math.random() < 0.1 ? 4 : 2;
     }
   }
 
@@ -548,6 +647,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < row.length - 1; i++) {
           if (row[i] === row[i + 1]) {
             row[i] *= 2;
+            currentScore += row[i];
             row[i + 1] = 0;
             merges.push({ r, c: i, val: row[i] });
             moved = true;
@@ -564,6 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = row.length - 1; i > 0; i--) {
           if (row[i] === row[i - 1]) {
             row[i] *= 2;
+            currentScore += row[i];
             row[i - 1] = 0;
             merges.push({ r, c: gridCols - 1 - (row.length - 1 - i), val: row[i] });
             moved = true;
@@ -581,6 +682,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < col.length - 1; i++) {
           if (col[i] === col[i + 1]) {
             col[i] *= 2;
+            currentScore += col[i];
             col[i + 1] = 0;
             merges.push({ r: i, c, val: col[i] });
             moved = true;
@@ -600,6 +702,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = col.length - 1; i > 0; i--) {
           if (col[i] === col[i - 1]) {
             col[i] *= 2;
+            currentScore += col[i];
             col[i - 1] = 0;
             merges.push({ r: gridRows - 1 - (col.length - 1 - i), c, val: col[i] });
             moved = true;
@@ -614,23 +717,60 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    if (currentScore > bestScore) {
+      bestScore = currentScore;
+      saveBestScore();
+    }
+    updateScoreDisplay();
+
     return { moved, merges };
   }
 
-  // Check Game State (Victory condition)
-  function checkGameState() {
+  // Check if any valid moves remain (matching main.py can_move())
+  function canMove() {
     for (let r = 0; r < gridRows; r++) {
       for (let c = 0; c < gridCols; c++) {
-        if (board[r][c] >= targetValue) {
-          clearInterval(timerInterval);
-          victoryLvl.textContent = currentLevel;
-          audioSynth.playVictory();
-          setTimeout(() => {
-            modalVictory.classList.remove('hidden');
-          }, 300);
-          return;
+        if (board[r][c] === 0) return true;
+        if (c < gridCols - 1 && board[r][c] === board[r][c + 1]) return true;
+        if (r < gridRows - 1 && board[r][c] === board[r + 1][c]) return true;
+      }
+    }
+    return false;
+  }
+
+  // Trigger Game Over
+  function triggerGameOver() {
+    clearInterval(timerInterval);
+    audioSynth.playGameOver();
+    if (gameoverScore) gameoverScore.textContent = currentScore;
+    if (modalGameOver) modalGameOver.classList.remove('hidden');
+  }
+
+  // Check Game State (Victory condition & Game Over condition)
+  function checkGameState() {
+    // 1. Victory Check
+    if (!hasWon) {
+      for (let r = 0; r < gridRows; r++) {
+        for (let c = 0; c < gridCols; c++) {
+          if (board[r][c] >= targetValue) {
+            hasWon = true;
+            clearInterval(timerInterval);
+            if (victoryLvl) victoryLvl.textContent = currentLevel;
+            audioSynth.playVictory();
+            setTimeout(() => {
+              if (modalVictory) modalVictory.classList.remove('hidden');
+            }, 300);
+            return;
+          }
         }
       }
+    }
+
+    // 2. Game Over Check
+    if (!canMove()) {
+      setTimeout(() => {
+        triggerGameOver();
+      }, 200);
     }
   }
 
