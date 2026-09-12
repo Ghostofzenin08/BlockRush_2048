@@ -409,6 +409,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function handleDirection(dir) {
+    if (!dir || currentScreen !== 'game') return;
+    const res = move(dir);
+    if (res.moved) {
+      spawnRandomTile();
+      renderBoard(res.merges);
+      if (res.merges && res.merges.length > 0) {
+        const topVal = Math.max(...res.merges.map(m => m.val));
+        audioSynth.playMerge(topVal);
+      } else {
+        audioSynth.playMove();
+      }
+      checkGameState();
+    }
+  }
+
   // Keybindings (Keyboard Controls)
   window.addEventListener('keydown', (e) => {
     if (modalVictory && !modalVictory.classList.contains('hidden')) {
@@ -424,25 +440,8 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    if (currentScreen !== 'game') return;
-
-    let res = { moved: false, merges: [] };
-    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') res = move('up');
-    else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') res = move('down');
-    else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') res = move('left');
-    else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') res = move('right');
-
-    if (res.moved) {
-      spawnRandomTile();
-      renderBoard(res.merges);
-      if (res.merges && res.merges.length > 0) {
-        const topVal = Math.max(...res.merges.map(m => m.val));
-        audioSynth.playMerge(topVal);
-      } else {
-        audioSynth.playMove();
-      }
-      checkGameState();
-    }
+    const keyMap = { ArrowUp: 'up', w: 'up', W: 'up', ArrowDown: 'down', s: 'down', S: 'down', ArrowLeft: 'left', a: 'left', A: 'left', ArrowRight: 'right', d: 'right', D: 'right' };
+    if (keyMap[e.key]) handleDirection(keyMap[e.key]);
   });
 
   // Touch / Swipe Gesture Controls for Mobile
@@ -456,32 +455,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: true });
 
   gameBoard.addEventListener('touchend', (e) => {
-    if (currentScreen !== 'game') return;
-    if (e.changedTouches.length === 1) {
-      const deltaX = e.changedTouches[0].clientX - touchStartX;
-      const deltaY = e.changedTouches[0].clientY - touchStartY;
-      const minSwipeDistance = 30;
-
-      let res = { moved: false, merges: [] };
-      if (Math.abs(deltaX) > Math.abs(deltaY)) {
-        if (deltaX > minSwipeDistance) res = move('right');
-        else if (deltaX < -minSwipeDistance) res = move('left');
-      } else {
-        if (deltaY > minSwipeDistance) res = move('down');
-        else if (deltaY < -minSwipeDistance) res = move('up');
-      }
-
-      if (res.moved) {
-        spawnRandomTile();
-        renderBoard(res.merges);
-        if (res.merges && res.merges.length > 0) {
-          const topVal = Math.max(...res.merges.map(m => m.val));
-          audioSynth.playMerge(topVal);
-        } else {
-          audioSynth.playMove();
-        }
-        checkGameState();
-      }
+    if (currentScreen !== 'game' || e.changedTouches.length !== 1) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX;
+    const deltaY = e.changedTouches[0].clientY - touchStartY;
+    if (Math.max(Math.abs(deltaX), Math.abs(deltaY)) > 30) {
+      const dir = Math.abs(deltaX) > Math.abs(deltaY) ? (deltaX > 0 ? 'right' : 'left') : (deltaY > 0 ? 'down' : 'up');
+      handleDirection(dir);
     }
   }, { passive: true });
 
