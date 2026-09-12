@@ -228,10 +228,10 @@ body {
   height: 24px;
 }
 
-/* Left Cascading Waterfall Columns (Figma Node 710:1168) */
+/* Left Cascading Waterfall Columns (Exact Figma Node 710:1168) */
 .cascade-section {
   position: relative;
-  width: 55%;
+  width: 55vw;
   height: 100vh;
   overflow: hidden;
   background: #000000;
@@ -240,28 +240,32 @@ body {
 
 .cascade-waterfall {
   display: flex;
-  gap: 36px;
+  justify-content: space-between;
+  width: 100%;
+  padding-left: 0;
+  padding-right: 20px;
   position: absolute;
-  left: 25px;
-  top: -200px;
-  height: 180vh;
+  left: -5px;
+  top: -240px;
+  height: 220vh;
 }
 
 .cascade-col {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  animation: colScroll 16s linear infinite;
+  gap: 16px;
+  animation: colScroll 20s linear infinite;
 }
 
-.cascade-col.col-1 { animation-duration: 18s; animation-delay: 0s; }
-.cascade-col.col-2 { animation-duration: 14s; animation-delay: -3s; }
-.cascade-col.col-3 { animation-duration: 20s; animation-delay: -7s; }
-.cascade-col.col-4 { animation-duration: 15s; animation-delay: -2s; }
-.cascade-col.col-5 { animation-duration: 19s; animation-delay: -5s; }
-.cascade-col.col-6 { animation-duration: 16s; animation-delay: -9s; }
-.cascade-col.col-7 { animation-duration: 22s; animation-delay: -4s; }
-.cascade-col.col-8 { animation-duration: 17s; animation-delay: -6s; }
+/* Staggered offsets matching Figma 710:1168 screenshot */
+.cascade-col.col-1 { margin-top: 0px;   animation-duration: 22s; animation-delay: 0s; }
+.cascade-col.col-2 { margin-top: 160px; animation-duration: 18s; animation-delay: -3s; }
+.cascade-col.col-3 { margin-top: 40px;  animation-duration: 25s; animation-delay: -7s; }
+.cascade-col.col-4 { margin-top: 220px; animation-duration: 19s; animation-delay: -2s; }
+.cascade-col.col-5 { margin-top: 80px;  animation-duration: 24s; animation-delay: -5s; }
+.cascade-col.col-6 { margin-top: -60px; animation-duration: 20s; animation-delay: -9s; }
+.cascade-col.col-7 { margin-top: 140px; animation-duration: 26s; animation-delay: -4s; }
+.cascade-col.col-8 { margin-top: 20px;  animation-duration: 21s; animation-delay: -6s; }
 
 @keyframes colScroll {
   0% { transform: translateY(0); }
@@ -269,11 +273,11 @@ body {
 }
 
 .casc-tile {
-  width: 40px;
-  height: 42px;
-  border-radius: 5px;
+  width: 42px;
+  height: 44px;
+  border-radius: 6px;
   flex-shrink: 0;
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), 0 4px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2), 0 3px 8px rgba(0, 0, 0, 0.5);
 }
 
 .casc-tile.c-yellow  { background-color: #ffbd00; }
@@ -281,24 +285,6 @@ body {
 .casc-tile.c-pink    { background-color: #ff0054; }
 .casc-tile.c-magenta { background-color: #9e0059; }
 .casc-tile.c-purple  { background-color: #390099; }
-
-/* Floating numbers from Figma */
-.figma-float-num {
-  position: absolute;
-  font-family: 'Instrument Sans', sans-serif;
-  font-size: 40px;
-  font-weight: 700;
-  color: #ffffff;
-  pointer-events: none;
-  z-index: 5;
-  text-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-}
-
-.num-2           { left: 120px; top: 40px; }
-.num-32          { left: 284px; top: 680px; }
-.num-1024-left   { left: 447px; top: 120px; }
-.num-8           { left: 479px; top: 450px; }
-.num-1024-right  { left: 618px; top: 80px; }
 
 /* Right Menu Area (Figma Node 710:1168) */
 .menu-right {
