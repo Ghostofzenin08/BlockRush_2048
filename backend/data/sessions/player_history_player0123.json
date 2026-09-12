@@ -8,13 +8,21 @@
   "highest_tile": 16,
   "total_moves": 7,
   "total_playtime_seconds": 10,
-  "sessions_completed": 13,
+  "sessions_completed": 14,
   "unlocked_tiers": [
     "Beginner"
   ],
   "latest_grid_size": "4x4",
-  "last_active": "2026-09-12T12:56:06.588639+00:00",
+  "last_active": "2026-09-12T12:57:06.981179+00:00",
   "recent_sessions": [
+    {
+      "session_id": "sess_42",
+      "mode": "Classic 2048",
+      "score": 0,
+      "highest_tile": 2,
+      "status": "playing",
+      "date": "2026-09-12T12:57:06.981220+00:00"
+    },
     {
       "session_id": "sess_41",
       "mode": "Classic 2048",
@@ -86,14 +94,6 @@
       "highest_tile": 2,
       "status": "playing",
       "date": "2026-09-12T09:36:21.541172+00:00"
-    },
-    {
-      "session_id": "sess_3",
-      "mode": "challenge",
-      "score": 44,
-      "highest_tile": 16,
-      "status": "won",
-      "date": "2026-09-12T09:36:16.842024+00:00"
     }
   ]
 }

@@ -518,15 +518,16 @@ body {
 .made-with-txt {
   font-family: 'Instrument Sans', sans-serif;
   font-size: 10px;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--text-color);
+  opacity: 0.75;
 }
 
 .goz-badge-img {
-  width: 162px;
-  height: 53px;
-  border-radius: 20px;
-  object-fit: cover;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  width: auto;
+  max-width: 160px;
+  height: 38px;
+  object-fit: contain;
+  display: block;
 }
 
 .toolbar-icons {
