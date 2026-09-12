@@ -1,9 +1,11 @@
-from flask import Flask, jsonify
+import os
+from flask import Flask, jsonify, send_from_directory
 from app.config import get_config
 from app.extensions import db, jwt, cors, migrate
 
 def create_app(config_name="development"):
-    app = Flask(__name__)
+    frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    app = Flask(__name__, static_folder=frontend_dir, static_url_path="")
     app.config.from_object(get_config(config_name))
 
     # Initialize extensions
@@ -11,6 +13,11 @@ def create_app(config_name="development"):
     jwt.init_app(app)
     cors.init_app(app, resources={r"/api/*": {"origins": app.config.get("CORS_ORIGINS", "*")}})
     migrate.init_app(app, db)
+
+    # Serve Website Web Game Frontend at root /
+    @app.route("/", methods=["GET"])
+    def index():
+        return send_from_directory(frontend_dir, "index.html")
 
     # Register API Blueprints under /api/v1/
     from app.api.auth import auth_bp
