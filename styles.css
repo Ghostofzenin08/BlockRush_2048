@@ -66,6 +66,10 @@ body {
   position: relative;
 }
 
+.hidden {
+  display: none !important;
+}
+
 /* Screen Management */
 .screen {
   position: absolute;
