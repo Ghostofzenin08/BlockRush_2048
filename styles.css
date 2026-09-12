@@ -193,24 +193,35 @@ body {
   letter-spacing: -0.5px;
 }
 
-/* MAIN MENU VIEW */
-.menu-container {
-  width: 100%;
-  max-width: 1280px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0;
-  width: 100vw;
-  min-height: 100vh;
-}
-
+/* MAIN MENU VIEW - FULL SCREEN (Exact Figma Node 710:1168 & 710:2) */
 #screen-menu {
-  padding: 0 !important;
-  margin: 0 !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
   width: 100vw !important;
   height: 100vh !important;
-  background-color: var(--bg-color);
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  justify-content: flex-start !important;
+  align-items: stretch !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.menu-container {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
 }
 
 /* Top-right theme toggle (Figma Node 710:1942 & 710:2) */
@@ -239,11 +250,11 @@ body {
 /* Left Cascading Waterfall Columns (Exact Figma Node 710:1168 & 710:2) */
 .cascade-section {
   position: relative;
-  width: 55vw;
-  height: 100vh;
-  overflow: hidden;
-  background-color: var(--bg-color);
-  flex-shrink: 0;
+  width: 58vw !important;
+  max-width: 58vw !important;
+  height: 100vh !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
   transition: background-color 0.3s ease;
 }
 
@@ -252,7 +263,7 @@ body {
   justify-content: space-between;
   width: 100%;
   padding-left: 0;
-  padding-right: 20px;
+  padding-right: 24px;
   position: absolute;
   left: -5px;
   top: -240px;
@@ -297,23 +308,28 @@ body {
 
 /* Right Menu Area (Figma Node 710:1168 & 710:2) */
 .menu-right {
-  width: 45%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  width: 42vw !important;
+  max-width: 42vw !important;
+  height: 100vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
   gap: 32px;
   padding: 40px 20px;
   z-index: 10;
-  background-color: var(--bg-color);
   transition: background-color 0.3s ease;
 }
 
+/* FULL SCREEN LIGHT MODE (Exact Figma Node 710:2) */
+[data-theme="light"],
+[data-theme="light"] body,
 [data-theme="light"] #screen-menu,
+[data-theme="light"] .menu-container,
 [data-theme="light"] .cascade-section,
 [data-theme="light"] .menu-right {
   background-color: #ffffff !important;
+  background: #ffffff !important;
 }
 
 [data-theme="light"] .brand-title {
@@ -321,7 +337,11 @@ body {
 }
 
 [data-theme="light"] .toolbar-icons .tool-btn img {
-  filter: brightness(0);
+  filter: brightness(0) !important;
+}
+
+[data-theme="light"] .top-theme-btn img {
+  filter: brightness(0) !important;
 }
 
 [data-theme="light"] .dark-only {
@@ -332,12 +352,35 @@ body {
   display: block !important;
 }
 
-[data-theme="dark"] .light-only {
-  display: none !important;
+/* FULL SCREEN DARK MODE (Exact Figma Node 710:1168) */
+[data-theme="dark"],
+[data-theme="dark"] body,
+[data-theme="dark"] #screen-menu,
+[data-theme="dark"] .menu-container,
+[data-theme="dark"] .cascade-section,
+[data-theme="dark"] .menu-right {
+  background-color: #000000 !important;
+  background: #000000 !important;
+}
+
+[data-theme="dark"] .brand-title {
+  color: #ffffff !important;
+}
+
+[data-theme="dark"] .toolbar-icons .tool-btn img {
+  filter: none !important;
+}
+
+[data-theme="dark"] .top-theme-btn img {
+  filter: none !important;
 }
 
 [data-theme="dark"] .dark-only {
   display: block !important;
+}
+
+[data-theme="dark"] .light-only {
+  display: none !important;
 }
 
 .brand-header {
