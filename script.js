@@ -354,12 +354,17 @@ document.addEventListener('DOMContentLoaded', () => {
     currentScreen = target;
   }
 
-  // Theme Toggle Handler
+  // Theme Toggle Handler (Figma Node 710:1168 & 710:2)
+  const savedTheme = localStorage.getItem('blockrush_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+
   btnTheme.addEventListener('click', () => {
     audioSynth.playClick();
     const html = document.documentElement;
     const isDark = html.getAttribute('data-theme') === 'dark';
-    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    const nextTheme = isDark ? 'light' : 'dark';
+    html.setAttribute('data-theme', nextTheme);
+    localStorage.setItem('blockrush_theme', nextTheme);
   });
 
   // Help & Info Toolbar Handlers
