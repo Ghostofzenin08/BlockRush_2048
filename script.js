@@ -1,5 +1,5 @@
 /**
- * BlockRush - Interactive Game Controller & SPA Router
+ * BlockRush - Interactive Game Controller & SPA Router with Full 2048 Game Engine & Session Persistence
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -58,6 +58,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnContinue = document.getElementById('btn-continue');
   const pgBeginner = document.getElementById('pg-beginner');
 
+  // Challenge Ladder Config (2x2 -> 4x4 -> 6x6 -> 8x8 -> 10x10 -> 12x12)
+  const CHALLENGE_LADDER = [
+    { level: 1, rows: 2, cols: 2, target: 16, time: 15, tag: "Level 1 (2x2)" },
+    { level: 2, rows: 4, cols: 4, target: 64, time: 30, tag: "Level 2 (4x4)" },
+    { level: 3, rows: 6, cols: 6, target: 128, time: 45, tag: "Level 3 (6x6)" },
+    { level: 4, rows: 8, cols: 8, target: 256, time: 60, tag: "Level 4 (8x8)" },
+    { level: 5, rows: 10, cols: 10, target: 512, time: 90, tag: "Level 5 (10x10)" },
+    { level: 6, rows: 12, cols: 12, target: 1024, time: 120, tag: "Level 6 (12x12 Max)" }
+  ];
+
   // State
   let currentScreen = 'menu';
   let gameMode = 'classic'; // 'classic', 'challenge', 'playground'
@@ -71,9 +81,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let hasWon = false;
   let timerInterval = null;
   let timeLeft = 10;
+  let timerDuration = 10;
   let soundEnabled = true;
   let currentSessionId = null;
   let gameStartTime = Date.now();
+  let moveCount = 0;
+  let challengeStepIndex = 0;
 
   function loadBestScore() {
     try {
@@ -95,28 +108,72 @@ document.addEventListener('DOMContentLoaded', () => {
     if (bestScoreValElem) bestScoreValElem.textContent = bestScore;
   }
 
+  function getLevelTier(score, maxTile) {
+    if (maxTile >= 256 || score >= 3000) return 'Master';
+    if (maxTile >= 128 || score >= 1500) return 'Pro';
+    if (maxTile >= 64 || score >= 500) return 'Advanced';
+    return 'Beginner';
+  }
+
   // Native Fetch Backend API Integrations
   async function apiStartSession(mode, tier, level) {
-    if (window.location.protocol === 'file:') return;
     try {
       const res = await fetch('/api/v1/game/session/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mode, tier, level })
+        body: JSON.stringify({
+          user_id: 'player0123',
+          mode,
+          tier,
+          level,
+          grid_size: `${gridRows}x${gridCols}`,
+          target_tile: targetValue
+        })
       });
       const data = await res.json();
-      if (data && data.session) currentSessionId = data.session.id;
+      if (data && (data.session_id || data.session)) {
+        currentSessionId = data.session_id || (data.session ? data.session.id : null);
+      }
     } catch (e) {}
   }
 
   async function apiSubmitSession(score, maxTile, duration, completed) {
-    if (window.location.protocol === 'file:') return;
     try {
+      const tier = getLevelTier(score, maxTile);
       await fetch('/api/v1/game/session/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ session_id: currentSessionId, score, max_tile: maxTile, duration_seconds: Math.round(duration), completed })
+        body: JSON.stringify({
+          user_id: 'player0123',
+          session_id: currentSessionId,
+          mode: gameMode,
+          current_level: currentLevel,
+          level_tier: tier,
+          grid_size: `${gridRows}x${gridCols}`,
+          target_tile: targetValue,
+          score,
+          highest_tile: maxTile,
+          number_of_moves: moveCount,
+          duration_seconds: Math.round(duration),
+          time_limit_seconds: timerDuration,
+          completed,
+          game_status: completed ? 'won' : 'lost'
+        })
       });
+    } catch (e) {}
+  }
+
+  async function loadPlaygroundSummary() {
+    try {
+      const res = await fetch('/api/v1/game/player/summary/player0123');
+      const data = await res.json();
+      if (data && data.player_data) {
+        const p = data.player_data;
+        const bannerSub = document.querySelector('.banner-sub');
+        if (bannerSub) {
+          bannerSub.textContent = `Tier: ${p.level_tier || 'Beginner'} | Best: ${p.best_score || 0} | Top Tile: ${p.highest_tile || 2}`;
+        }
+      }
     } catch (e) {}
   }
 
@@ -128,14 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       const txt = supportQueryForm.querySelector('textarea')?.value;
       audioSynth.playVictory();
-      if (window.location.protocol === 'file:') {
-        if (queryToast) {
-          queryToast.classList.remove('hidden');
-          setTimeout(() => queryToast.classList.add('hidden'), 3500);
-        }
-        supportQueryForm.reset();
-        return;
-      }
       try {
         await fetch('/api/v1/support/submit-query', {
           method: 'POST',
@@ -295,7 +344,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (target === 'menu') screenMenu.classList.add('active');
     else if (target === 'game') screenGame.classList.add('active');
     else if (target === 'weekly') screenWeekly.classList.add('active');
-    else if (target === 'playground') screenPlayground.classList.add('active');
+    else if (target === 'playground') {
+      screenPlayground.classList.add('active');
+      loadPlaygroundSummary();
+    }
     else if (target === 'support') screenSupport.classList.add('active');
     else if (target === 'terms') screenTerms.classList.add('active');
 
@@ -356,14 +408,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Support Query Form Handler
-
-  // Audio Toggle
-  btnAudio.addEventListener('click', () => {
-    soundEnabled = !soundEnabled;
-    btnAudio.style.opacity = soundEnabled ? '1' : '0.4';
-  });
-
   // Navigation Click Event Listeners
   btnStart.addEventListener('click', () => {
     audioSynth.playClick();
@@ -376,6 +420,17 @@ document.addEventListener('DOMContentLoaded', () => {
     audioSynth.playClick();
     switchScreen('weekly');
   });
+
+  const btnStartChallengeMode = document.getElementById('btn-start-challenge-mode');
+  if (btnStartChallengeMode) {
+    btnStartChallengeMode.addEventListener('click', () => {
+      audioSynth.playClick();
+      gameMode = 'challenge';
+      challengeStepIndex = 0;
+      const c = CHALLENGE_LADDER[0];
+      startNewGame(c.rows, c.cols, c.target, 'Challenge Mode', `${c.level}/6`, c.tag, c.time);
+    });
+  }
 
   btnPlayground.addEventListener('click', () => {
     audioSynth.playClick();
@@ -437,12 +492,24 @@ document.addEventListener('DOMContentLoaded', () => {
   btnRetry.addEventListener('click', () => {
     audioSynth.playClick();
     if (modalVictory) modalVictory.classList.add('hidden');
-    startNewGame(gridRows, gridCols, targetValue, gameModeTitle.textContent, levelNum.textContent, currentLevelText.textContent);
+    startNewGame(gridRows, gridCols, targetValue, gameModeTitle.textContent, levelNum.textContent, currentLevelText.textContent, timerDuration);
   });
 
   btnContinue.addEventListener('click', () => {
     audioSynth.playClick();
     if (modalVictory) modalVictory.classList.add('hidden');
+    if (gameMode === 'challenge') {
+      challengeStepIndex++;
+      if (challengeStepIndex < CHALLENGE_LADDER.length) {
+        const c = CHALLENGE_LADDER[challengeStepIndex];
+        startNewGame(c.rows, c.cols, c.target, 'Challenge Mode', `${c.level}/6`, c.tag, c.time);
+      } else {
+        // Max 12x12 grid reached: scale difficulty and target
+        const extraTarget = targetValue * 2;
+        const extraTime = Math.max(30, timerDuration - 10);
+        startNewGame(12, 12, extraTarget, 'Challenge (Max 12x12)', 'Master', 'Extreme Rush', extraTime);
+      }
+    }
   });
 
   // Game Over Button Listeners
@@ -450,7 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnGameOverRetry.addEventListener('click', () => {
       audioSynth.playClick();
       if (modalGameOver) modalGameOver.classList.add('hidden');
-      startNewGame(gridRows, gridCols, targetValue, gameModeTitle.textContent, levelNum.textContent, currentLevelText.textContent);
+      startNewGame(gridRows, gridCols, targetValue, gameModeTitle.textContent, levelNum.textContent, currentLevelText.textContent, timerDuration);
     });
   }
 
@@ -458,6 +525,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!dir || currentScreen !== 'game') return;
     const res = move(dir);
     if (res.moved) {
+      moveCount++;
       spawnRandomTile();
       renderBoard(res.merges);
       if (res.merges && res.merges.length > 0) {
@@ -510,15 +578,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: true });
 
   // START GAME ENGINE LOGIC
-  function startNewGame(rows, cols, target, modeLabel, levelVal, levelTag) {
+  function startNewGame(rows, cols, target, modeLabel, levelVal, levelTag, durationSeconds = 10) {
     gridRows = rows;
     gridCols = cols;
     targetValue = target;
     currentScore = 0;
+    moveCount = 0;
     hasWon = false;
+    timerDuration = durationSeconds;
     gameStartTime = Date.now();
     updateScoreDisplay();
-    apiStartSession(modeLabel, levelTag, currentLevel);
+
+    const tier = getLevelTier(currentScore, 2);
+    apiStartSession(modeLabel, tier, currentLevel);
 
     if (modalVictory) modalVictory.classList.add('hidden');
     if (modalGameOver) modalGameOver.classList.add('hidden');
@@ -527,17 +599,16 @@ document.addEventListener('DOMContentLoaded', () => {
     levelNum.textContent = levelVal;
     currentLevelText.textContent = levelTag;
 
-    // Adjust CSS Grid Class
+    // Apply Dynamic CSS Grid Layout (Support 2x2 up to 12x12)
     gameBoard.className = 'board-grid';
-    if (rows === 2 && cols === 2) gameBoard.classList.add('grid-2x2');
-    else if (rows === 3 && cols === 4) gameBoard.classList.add('grid-3x4');
-    else gameBoard.classList.add('grid-4x4');
+    gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    gameBoard.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
     // Handle Challenge Mode Timer
     clearInterval(timerInterval);
     if (modeLabel.toLowerCase().includes('challenge') || gameMode === 'challenge') {
       challengeTimerContainer.classList.remove('hidden');
-      startTimer(10);
+      startTimer(timerDuration);
     } else {
       challengeTimerContainer.classList.add('hidden');
     }
@@ -570,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateTimerUI() {
-    const pct = (timeLeft / 10) * 100;
+    const pct = (timeLeft / timerDuration) * 100;
     timerFill.style.height = `${pct}%`;
     const secs = Math.ceil(timeLeft);
     timerDisplay.textContent = `00 : ${secs < 10 ? '0' + secs : secs}`;
@@ -604,10 +675,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Board Renderer with FX Support
   function renderBoard(mergedList = []) {
     gameBoard.innerHTML = '';
+    const fontSize = gridCols > 8 ? '14px' : gridCols > 4 ? '20px' : 'clamp(20px, 5vw, 36px)';
+
     for (let r = 0; r < gridRows; r++) {
       for (let c = 0; c < gridCols; c++) {
         const val = board[r][c];
         const tile = document.createElement('div');
+        tile.style.fontSize = fontSize;
         if (val > 0) {
           tile.className = `g-tile t-${val}`;
           tile.textContent = val;
@@ -638,7 +712,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (emptyCells.length > 0) {
       const idx = Math.floor(Math.random() * emptyCells.length);
       const cell = emptyCells[idx];
-      board[cell.r][cell.c] = Math.random() < 0.1 ? 4 : 2;
+      // Post-12x12 high difficulty: 25% chance of tile 4
+      const pFour = gridRows >= 12 ? 0.25 : 0.1;
+      board[cell.r][cell.c] = Math.random() < pFour ? 4 : 2;
     }
   }
 
@@ -749,7 +825,7 @@ document.addEventListener('DOMContentLoaded', () => {
     clearInterval(timerInterval);
     audioSynth.playGameOver();
     const dur = (Date.now() - gameStartTime) / 1000;
-    const maxTile = Math.max(...board.flat());
+    const maxTile = Math.max(...board.flat(), 2);
     apiSubmitSession(currentScore, maxTile, dur, false);
     if (gameoverScore) gameoverScore.textContent = currentScore;
     if (modalGameOver) modalGameOver.classList.remove('hidden');
@@ -765,7 +841,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hasWon = true;
             clearInterval(timerInterval);
             const dur = (Date.now() - gameStartTime) / 1000;
-            const maxTile = Math.max(...board.flat());
+            const maxTile = Math.max(...board.flat(), 2);
             apiSubmitSession(currentScore, maxTile, dur, true);
             if (victoryLvl) victoryLvl.textContent = currentLevel;
             audioSynth.playVictory();

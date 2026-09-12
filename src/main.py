@@ -139,8 +139,10 @@ class SettingsStore:
 
 class BoardEngine:
 
-    def __init__(self):
-        self.board = [[0] * COLS for _ in range(ROWS)]
+    def __init__(self, rows=4, cols=4):
+        self.rows = rows
+        self.cols = cols
+        self.board = [[0] * self.cols for _ in range(self.rows)]
         self.score = 0
 
     def snapshot(self):
@@ -152,26 +154,26 @@ class BoardEngine:
         self.score = score
 
     def empty_cells(self):
-        return [(r, c) for r in range(ROWS) for c in range(COLS) if not self.board[r][c]]
+        return [(r, c) for r in range(self.rows) for c in range(self.cols) if not self.board[r][c]]
 
-    def add_random_tile(self):
+    def add_random_tile(self, p_four=0.1):
         empty = self.empty_cells()
         if not empty:
             return None
         row, col = random.choice(empty)
-        value = 4 if random.random() < 0.1 else 2
+        value = 4 if random.random() < p_four else 2
         self.board[row][col] = value
         return row, col, value
 
     def can_move(self):
-        for row in range(ROWS):
-            for col in range(COLS):
+        for row in range(self.rows):
+            for col in range(self.cols):
                 value = self.board[row][col]
                 if not value:
                     return True
-                if col < COLS - 1 and value == self.board[row][col + 1]:
+                if col < self.cols - 1 and value == self.board[row][col + 1]:
                     return True
-                if row < ROWS - 1 and value == self.board[row + 1][col]:
+                if row < self.rows - 1 and value == self.board[row + 1][col]:
                     return True
         return False
 
