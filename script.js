@@ -97,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Native Fetch Backend API Integrations
   async function apiStartSession(mode, tier, level) {
+    if (window.location.protocol === 'file:') return;
     try {
       const res = await fetch('/api/v1/game/session/start', {
         method: 'POST',
@@ -109,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function apiSubmitSession(score, maxTile, duration, completed) {
+    if (window.location.protocol === 'file:') return;
     try {
       await fetch('/api/v1/game/session/submit', {
         method: 'POST',
@@ -126,6 +128,14 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       const txt = supportQueryForm.querySelector('textarea')?.value;
       audioSynth.playVictory();
+      if (window.location.protocol === 'file:') {
+        if (queryToast) {
+          queryToast.classList.remove('hidden');
+          setTimeout(() => queryToast.classList.add('hidden'), 3500);
+        }
+        supportQueryForm.reset();
+        return;
+      }
       try {
         await fetch('/api/v1/support/submit-query', {
           method: 'POST',
@@ -347,19 +357,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Support Query Form Handler
-  const supportQueryForm = document.getElementById('support-query-form');
-  const queryToast = document.getElementById('query-toast');
-  if (supportQueryForm) {
-    supportQueryForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      audioSynth.playVictory();
-      if (queryToast) {
-        queryToast.classList.remove('hidden');
-        setTimeout(() => queryToast.classList.add('hidden'), 3500);
-      }
-      supportQueryForm.reset();
-    });
-  }
 
   // Audio Toggle
   btnAudio.addEventListener('click', () => {
