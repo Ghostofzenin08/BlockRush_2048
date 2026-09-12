@@ -45,25 +45,180 @@
     </div>
   </div>
 
-  <!-- Screen 2: Main Menu View (Figma main menu / main) -->
+  <!-- Screen 2: Main Menu View (Exact Figma Node 710:1168) -->
   <div id="screen-menu" class="screen">
+    <!-- Top-right theme toggle (Figma Node 710:1942) -->
+    <button id="btn-theme" class="top-theme-btn" title="Toggle Theme">
+      <img src="assets/sun.svg" alt="Theme" class="theme-sun-icon">
+    </button>
+
     <div class="menu-container">
       
-      <!-- Left Side Cascading Colored Block Tiles -->
+      <!-- Left Side Cascading Falling Columns (Figma Node 710:1168) -->
       <div class="cascade-section">
-        <div class="tile-card tile-2 pos-1"><span class="val">2</span></div>
-        <div class="tile-card tile-2048 pos-2"><span class="val">2048</span></div>
-        <div class="tile-card tile-4 pos-3"><span class="val">4</span></div>
-        <div class="tile-card tile-16 pos-4"><span class="val">16</span></div>
-        <div class="tile-card tile-16 pos-5"><span class="val">16</span></div>
-        <div class="tile-card tile-4 pos-6"><span class="val">4</span></div>
-        <div class="tile-card tile-256 pos-7"><span class="val">256</span></div>
-        <div class="tile-card tile-1024 pos-8"><span class="val">1024</span></div>
-        <div class="tile-card tile-8 pos-9"><span class="val">8</span></div>
-        <div class="tile-card tile-32 pos-10"><span class="val">32</span></div>
+        <!-- Floating large 2048 numbers -->
+        <span class="figma-float-num num-2">2</span>
+        <span class="figma-float-num num-32">32</span>
+        <span class="figma-float-num num-1024-left">1024</span>
+        <span class="figma-float-num num-8">8</span>
+        <span class="figma-float-num num-1024-right">1024</span>
+
+        <div class="cascade-waterfall">
+          <!-- Column 1 (x: 25px) -->
+          <div class="cascade-col col-1">
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+          </div>
+
+          <!-- Column 2 (x: 102px) -->
+          <div class="cascade-col col-2">
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+          </div>
+
+          <!-- Column 3 (x: 184px) -->
+          <div class="cascade-col col-3">
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+          </div>
+
+          <!-- Column 4 (x: 279px) -->
+          <div class="cascade-col col-4">
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+          </div>
+
+          <!-- Column 5 (x: 374px) -->
+          <div class="cascade-col col-5">
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+          </div>
+
+          <!-- Column 6 (x: 483px) -->
+          <div class="cascade-col col-6">
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+          </div>
+
+          <!-- Column 7 (x: 574px) -->
+          <div class="cascade-col col-7">
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+          </div>
+
+          <!-- Column 8 (x: 668px) -->
+          <div class="cascade-col col-8">
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+            <div class="casc-tile c-yellow"></div>
+            <div class="casc-tile c-orange"></div>
+            <div class="casc-tile c-pink"></div>
+            <div class="casc-tile c-magenta"></div>
+            <div class="casc-tile c-purple"></div>
+          </div>
+        </div>
       </div>
 
-      <!-- Right Side Navigation & Brand Menu -->
+      <!-- Right Side Navigation & Brand Menu (Figma Node 710:1168) -->
       <div class="menu-right">
         <!-- Brand Header Logo -->
         <div class="brand-header">
@@ -78,18 +233,18 @@
           <h1 class="brand-title">BlockRush</h1>
         </div>
 
-        <!-- Menu Navigation Buttons (Matching Figma Node 600:561 & 600:548) -->
+        <!-- Menu Navigation Buttons (Matching Figma Node 710:1176, 710:1180, 710:1184) -->
         <div class="menu-buttons">
           <button id="btn-start" class="menu-btn">
-            <svg class="btn-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+            <img src="assets/play.svg" class="btn-icon" alt="Play">
             <span>Start Playing</span>
           </button>
           <button id="btn-challenge" class="menu-btn">
-            <svg class="btn-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3h8v8H3zm10 0h8v8h-8zM3 13h8v8H3zm10 0h8v8h-8z"/></svg>
+            <img src="assets/challenge.svg" class="btn-icon" alt="Challenge">
             <span>Challenge</span>
           </button>
           <button id="btn-playground" class="menu-btn">
-            <svg class="btn-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+            <img src="assets/playground.svg" class="btn-icon" alt="Playground">
             <span>Playground</span>
           </button>
         </div>
@@ -101,29 +256,26 @@
           <button id="link-terms" class="portal-link-btn">Terms & Conditions</button>
         </div>
 
-        <!-- Footer Section -->
+        <!-- Footer Section (Figma Node 710:1188 to 710:1198) -->
         <div class="menu-footer">
-          <div class="made-with">
-            <span>Made with</span>
-            <div class="goz-inline">
-              <img src="goz_logo_dark.png" alt="Ghostofzenin" class="goz-logo-img-sm dark-only">
-              <img src="goz_logo_light.png" alt="Ghostofzenin" class="goz-logo-img-sm light-only">
-            </div>
+          <div class="made-with-section">
+            <span class="made-with-txt">Made with</span>
+            <img src="assets/goz_badge.png" alt="Ghostofzenin" class="goz-badge-img">
           </div>
 
           <div class="toolbar-icons">
             <button id="btn-audio" class="tool-btn" title="Toggle Sound">
-              <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+              <img src="assets/headset.svg" alt="Audio" width="24" height="24">
             </button>
             <button id="btn-help" class="tool-btn" title="Help / How to Play">
-              <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+              <img src="assets/help.svg" alt="Help" width="24" height="24">
             </button>
             <button id="btn-info" class="tool-btn" title="Game Info / Support">
-              <svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+              <img src="assets/info.svg" alt="Info" width="24" height="24">
             </button>
-            <button id="btn-theme" class="tool-btn" title="Toggle Light/Dark Theme">
-              <svg class="theme-icon-dark" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
-            </button>
+            <a href="https://github.com/Ghostofzenin08/BlockRush_2048" target="_blank" class="tool-btn" title="Download / Repository">
+              <img src="assets/download.svg" alt="Download" width="24" height="24">
+            </a>
           </div>
         </div>
       </div>
