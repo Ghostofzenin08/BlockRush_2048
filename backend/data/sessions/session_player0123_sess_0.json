@@ -1,0 +1,20 @@
+{
+  "user_id": "player0123",
+  "session_id": "sess_0",
+  "mode": "classic",
+  "current_level": 1,
+  "level_tier": "Beginner",
+  "grid_size": "4x4",
+  "target_tile": 2048,
+  "score": 2048,
+  "current_score": 2048,
+  "highest_tile": 2048,
+  "number_of_moves": 0,
+  "duration_seconds": 0,
+  "time_limit_seconds": 0,
+  "actual_completion_time_seconds": 0,
+  "session_start_time": "2026-09-12T12:26:25.879697+00:00",
+  "session_end_time": "2026-09-12T12:26:25.879721+00:00",
+  "game_status": "won",
+  "updated_at": "2026-09-12T12:26:25.879750+00:00"
+}

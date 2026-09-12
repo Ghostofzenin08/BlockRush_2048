@@ -1,0 +1,20 @@
+{
+  "user_id": "player0123",
+  "session_id": "sess_11",
+  "mode": "challenge",
+  "current_level": 1,
+  "level_tier": "Advanced",
+  "grid_size": "4x4",
+  "target_tile": 64,
+  "score": 488,
+  "current_score": 488,
+  "highest_tile": 64,
+  "number_of_moves": 58,
+  "duration_seconds": 20,
+  "time_limit_seconds": 30,
+  "actual_completion_time_seconds": 20,
+  "session_start_time": "2026-09-12T10:01:34.899096+00:00",
+  "session_end_time": "2026-09-12T10:01:34.899118+00:00",
+  "game_status": "won",
+  "updated_at": "2026-09-12T10:01:34.899141+00:00"
+}

@@ -199,7 +199,7 @@
     </div>
   </div>
 
-  <!-- Screen 4: Weekly Challenge Selector (Figma Challenge light mode / 601:939) -->
+  <!-- Screen 4: Weekly Challenge Selector (Figma Node 710:1985) -->
   <div id="screen-weekly-challenge" class="screen">
     <div class="weekly-wrapper">
       <div class="weekly-header">
@@ -225,7 +225,7 @@
         <span>Start Challenge</span>
       </button>
 
-      <div class="game-footer">
+      <div class="game-footer faded-brand">
         <div class="blockrush-logo mini">
           <span class="sq sq-1"></span>
           <span class="sq sq-2"></span>
@@ -239,7 +239,7 @@
     </div>
   </div>
 
-  <!-- Screen 5: Playground Mode Selector (Figma Playground light mode / 600:773) -->
+  <!-- Screen 5: Playground Mode Selector (Figma Node 710:2102) -->
   <div id="screen-playground-select" class="screen">
     <div class="playground-wrapper">
       <div class="weekly-header">
@@ -249,11 +249,11 @@
         <h2>PlayGround <span class="grid-ic">📈</span></h2>
       </div>
 
-      <!-- Player Math Banner Section (Figma 622:1191 & 622:1192 / Node 600:773) -->
+      <!-- Player Math Banner Section (Figma Node 710:2102) -->
       <div class="player-math-card">
-        <span class="player-handle">#player0123</span>
+        <span class="player-handle">#Jonedoe@123</span>
         <div class="player-avatar">🛡️</div>
-        <h3 class="banner-heading">Increase Your Level of Math</h3>
+        <h3 class="banner-heading">You're Current Badge : Bronze</h3>
         <button id="btn-rush-level" class="rush-act-btn">Rush the level</button>
       </div>
 
@@ -277,43 +277,39 @@
         </div>
 
         <!-- Pro Tier -->
-        <div id="pg-pro" class="pg-card">
+        <div id="pg-pro" class="pg-card locked-tier">
           <div class="pg-left">
             <span class="badge-icon">⚡</span>
             <div class="pg-title-group">
               <span class="pg-title">Pro</span>
-              <span class="rush-lbl">Rush level</span>
-              <div class="rush-progress-bar"><div class="rush-progress-fill p50"></div></div>
+              <span class="unlock-hint">Unlock after Level 15</span>
             </div>
           </div>
           <div class="pg-right">
-            <span class="pg-level-badge">Level 0</span>
-            <button class="pg-play-circle" title="Play Pro">
-              <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+            <button class="pg-play-circle lock-btn" title="Locked - Level 15 Required">
+              <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
             </button>
           </div>
         </div>
 
         <!-- Master Tier -->
-        <div id="pg-master" class="pg-card">
+        <div id="pg-master" class="pg-card locked-tier">
           <div class="pg-left">
             <span class="badge-icon">👑</span>
             <div class="pg-title-group">
               <span class="pg-title">Master</span>
-              <span class="rush-lbl">Rush level</span>
-              <div class="rush-progress-bar"><div class="rush-progress-fill p55"></div></div>
+              <span class="unlock-hint">Unlock after Level 45</span>
             </div>
           </div>
           <div class="pg-right">
-            <span class="pg-level-badge">Level 0</span>
-            <button class="pg-play-circle" title="Play Master">
-              <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+            <button class="pg-play-circle lock-btn" title="Locked - Level 45 Required">
+              <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
             </button>
           </div>
         </div>
       </div>
 
-      <div class="game-footer">
+      <div class="game-footer faded-brand">
         <div class="blockrush-logo mini">
           <span class="sq sq-1"></span>
           <span class="sq sq-2"></span>

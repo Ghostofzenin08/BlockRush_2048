@@ -1,0 +1,20 @@
+{
+  "user_id": "player0123",
+  "session_id": "sess_23",
+  "mode": "classic",
+  "current_level": 1,
+  "level_tier": "Master",
+  "grid_size": "4x4",
+  "target_tile": 2048,
+  "score": 2980,
+  "current_score": 2980,
+  "highest_tile": 256,
+  "number_of_moves": 244,
+  "duration_seconds": 267,
+  "time_limit_seconds": 10,
+  "actual_completion_time_seconds": 267,
+  "session_start_time": "2026-09-12T10:22:31.599978+00:00",
+  "session_end_time": "2026-09-12T10:22:31.600008+00:00",
+  "game_status": "lost",
+  "updated_at": "2026-09-12T10:22:31.600034+00:00"
+}

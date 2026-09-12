@@ -1,0 +1,16 @@
+{
+  "user_id": "player0123",
+  "session_id": "sess_30",
+  "mode": "Playground",
+  "current_level": 1,
+  "level_tier": "Beginner",
+  "grid_size": "3x3",
+  "target_tile": 32,
+  "current_score": 0,
+  "score": 0,
+  "highest_tile": 2,
+  "number_of_moves": 0,
+  "session_start_time": "2026-09-12T12:16:55.524684+00:00",
+  "game_status": "playing",
+  "updated_at": "2026-09-12T12:16:55.524766+00:00"
+}

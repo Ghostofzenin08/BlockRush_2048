@@ -1,0 +1,20 @@
+{
+  "user_id": "player0123",
+  "session_id": "sess_33",
+  "mode": "challenge",
+  "current_level": 1,
+  "level_tier": "Beginner",
+  "grid_size": "6x6",
+  "target_tile": 128,
+  "score": 152,
+  "current_score": 152,
+  "highest_tile": 32,
+  "number_of_moves": 28,
+  "duration_seconds": 83,
+  "time_limit_seconds": 45,
+  "actual_completion_time_seconds": 83,
+  "session_start_time": "2026-09-12T12:18:57.726738+00:00",
+  "session_end_time": "2026-09-12T12:18:57.729883+00:00",
+  "game_status": "lost",
+  "updated_at": "2026-09-12T12:18:57.729926+00:00"
+}
