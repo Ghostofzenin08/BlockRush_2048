@@ -3,97 +3,97 @@
   "current_level": 1,
   "level_tier": "Beginner",
   "current_score": 0,
-  "high_score": 44,
-  "best_score": 44,
+  "high_score": 48,
+  "best_score": 48,
   "highest_tile": 16,
-  "total_moves": 7,
-  "total_playtime_seconds": 10,
-  "sessions_completed": 14,
+  "total_moves": 28,
+  "total_playtime_seconds": 31,
+  "sessions_completed": 25,
   "unlocked_tiers": [
     "Beginner"
   ],
   "latest_grid_size": "4x4",
-  "last_active": "2026-09-12T12:57:06.981179+00:00",
+  "last_active": "2026-09-12T13:00:39.229478+00:00",
   "recent_sessions": [
     {
-      "session_id": "sess_42",
-      "mode": "Classic 2048",
-      "score": 0,
-      "highest_tile": 2,
-      "status": "playing",
-      "date": "2026-09-12T12:57:06.981220+00:00"
-    },
-    {
-      "session_id": "sess_41",
-      "mode": "Classic 2048",
-      "score": 0,
-      "highest_tile": 2,
-      "status": "playing",
-      "date": "2026-09-12T12:56:06.588682+00:00"
-    },
-    {
-      "session_id": "sess_40",
-      "mode": "Classic 2048",
-      "score": 0,
-      "highest_tile": 2,
-      "status": "playing",
-      "date": "2026-09-12T12:55:54.636496+00:00"
-    },
-    {
-      "session_id": "sess_39",
-      "mode": "Classic 2048",
-      "score": 0,
-      "highest_tile": 2,
-      "status": "playing",
-      "date": "2026-09-12T12:46:07.332611+00:00"
-    },
-    {
-      "session_id": "sess_38",
-      "mode": "Classic 2048",
-      "score": 0,
-      "highest_tile": 2,
-      "status": "playing",
-      "date": "2026-09-12T12:38:40.543801+00:00"
-    },
-    {
-      "session_id": "sess_37",
-      "mode": "Classic 2048",
-      "score": 0,
-      "highest_tile": 2,
-      "status": "playing",
-      "date": "2026-09-12T12:37:33.338084+00:00"
-    },
-    {
-      "session_id": "sess_36",
-      "mode": "Classic 2048",
-      "score": 0,
-      "highest_tile": 2,
-      "status": "playing",
-      "date": "2026-09-12T12:33:15.626492+00:00"
-    },
-    {
-      "session_id": "sess_6",
-      "mode": "Classic 2048",
-      "score": 0,
-      "highest_tile": 2,
-      "status": "playing",
-      "date": "2026-09-12T09:54:40.453639+00:00"
-    },
-    {
-      "session_id": "sess_5",
-      "mode": "Classic 2048",
-      "score": 0,
-      "highest_tile": 2,
-      "status": "playing",
-      "date": "2026-09-12T09:36:30.921733+00:00"
-    },
-    {
-      "session_id": "sess_4",
+      "session_id": "sess_49",
       "mode": "Challenge Mode",
       "score": 0,
       "highest_tile": 2,
       "status": "playing",
-      "date": "2026-09-12T09:36:21.541172+00:00"
+      "date": "2026-09-12T13:00:39.229521+00:00"
+    },
+    {
+      "session_id": "sess_48",
+      "mode": "challenge",
+      "score": 48,
+      "highest_tile": 16,
+      "status": "won",
+      "date": "2026-09-12T13:00:35.978964+00:00"
+    },
+    {
+      "session_id": "sess_48",
+      "mode": "Challenge Mode",
+      "score": 0,
+      "highest_tile": 2,
+      "status": "playing",
+      "date": "2026-09-12T13:00:29.617095+00:00"
+    },
+    {
+      "session_id": "sess_47",
+      "mode": "challenge",
+      "score": 0,
+      "highest_tile": 4,
+      "status": "lost",
+      "date": "2026-09-12T13:00:28.382879+00:00"
+    },
+    {
+      "session_id": "sess_47",
+      "mode": "Challenge Mode",
+      "score": 0,
+      "highest_tile": 2,
+      "status": "playing",
+      "date": "2026-09-12T13:00:25.197059+00:00"
+    },
+    {
+      "session_id": "sess_46",
+      "mode": "challenge",
+      "score": 24,
+      "highest_tile": 8,
+      "status": "lost",
+      "date": "2026-09-12T13:00:23.832152+00:00"
+    },
+    {
+      "session_id": "sess_46",
+      "mode": "Challenge Mode",
+      "score": 0,
+      "highest_tile": 2,
+      "status": "playing",
+      "date": "2026-09-12T13:00:17.737396+00:00"
+    },
+    {
+      "session_id": "sess_45",
+      "mode": "challenge",
+      "score": 8,
+      "highest_tile": 4,
+      "status": "lost",
+      "date": "2026-09-12T13:00:16.132230+00:00"
+    },
+    {
+      "session_id": "sess_45",
+      "mode": "Challenge Mode",
+      "score": 0,
+      "highest_tile": 2,
+      "status": "playing",
+      "date": "2026-09-12T13:00:10.256241+00:00"
+    },
+    {
+      "session_id": "sess_44",
+      "mode": "Classic 2048",
+      "score": 0,
+      "highest_tile": 2,
+      "status": "playing",
+      "date": "2026-09-12T13:00:05.473303+00:00"
     }
   ]
 }

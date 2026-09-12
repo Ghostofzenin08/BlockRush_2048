@@ -482,6 +482,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  const btnGameSound = document.getElementById('btn-game-sound');
+  if (btnGameSound) {
+    btnGameSound.addEventListener('click', () => {
+      audioSynth.playClick();
+      const icon = btnGameSound.querySelector('.material-symbols-outlined');
+      if (icon) {
+        const isMuted = icon.textContent === 'volume_off';
+        icon.textContent = isMuted ? 'volume_down' : 'volume_off';
+      }
+    });
+  }
+
   btnExit.addEventListener('click', () => {
     audioSynth.playClick();
     clearInterval(timerInterval);
