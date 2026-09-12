@@ -611,14 +611,10 @@ document.addEventListener('DOMContentLoaded', () => {
     gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     gameBoard.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
-    // Handle Challenge Mode Timer (Strictly hidden in Classic Mode)
+    // Handle Challenge Mode Timer
     clearInterval(timerInterval);
-    if (gameMode === 'challenge') {
-      if (challengeTimerContainer) challengeTimerContainer.classList.remove('hidden');
-      startTimer(timerDuration);
-    } else {
-      if (challengeTimerContainer) challengeTimerContainer.classList.add('hidden');
-    }
+    if (challengeTimerContainer) challengeTimerContainer.classList.toggle('hidden', gameMode !== 'challenge');
+    if (gameMode === 'challenge') startTimer(timerDuration);
 
     // Initialize Empty Board Grid
     board = Array(gridRows).fill(null).map(() => Array(gridCols).fill(0));
