@@ -611,7 +611,12 @@ document.addEventListener('DOMContentLoaded', () => {
     gameBoard.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     gameBoard.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
 
-    // Handle Challenge Mode Timer
+    // Handle Challenge Mode Header & Timer (Figma 710:2015 & 710:2069)
+    const scoreBadge = document.querySelector('.score-badge');
+    const bestBadge = document.querySelector('.best-badge');
+    if (scoreBadge) scoreBadge.classList.toggle('hidden', gameMode === 'challenge');
+    if (bestBadge) bestBadge.classList.toggle('hidden', gameMode === 'challenge');
+
     clearInterval(timerInterval);
     if (challengeTimerContainer) challengeTimerContainer.classList.toggle('hidden', gameMode !== 'challenge');
     if (gameMode === 'challenge') startTimer(timerDuration);
