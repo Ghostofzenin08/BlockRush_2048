@@ -246,7 +246,7 @@ class BlockRush2048:
         self.move_sound = self.make_tone(400, 0.045)
         self.merge_sound = self.make_tone(660, 0.08)
 
-        self.state = "start"  # start, playing, paused, won, lost, leaderboard
+        self.state = "playing"  # start, playing, paused, won, lost, leaderboard
         self.previous_state_before_pause = "playing"
         self.undo_stack = []
         self.engine = BoardEngine()
@@ -682,7 +682,7 @@ class BlockRush2048:
         if self.state == "start" and event.key in (pygame.K_RETURN, pygame.K_SPACE):
             self.start_game()
         elif self.state == "leaderboard" and event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_BACKSPACE):
-            self.state = "start"
+            self.state = "playing"
         elif self.state == "paused" and event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_p):
             self.state = self.previous_state_before_pause
         elif self.state == "lost" and event.key in (pygame.K_RETURN, pygame.K_SPACE, pygame.K_r):
