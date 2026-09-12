@@ -72,6 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let timerInterval = null;
   let timeLeft = 10;
   let soundEnabled = true;
+  let currentSessionId = null;
+  let gameStartTime = Date.now();
 
   function loadBestScore() {
     try {
@@ -91,6 +93,52 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateScoreDisplay() {
     if (scoreValElem) scoreValElem.textContent = currentScore;
     if (bestScoreValElem) bestScoreValElem.textContent = bestScore;
+  }
+
+  // Native Fetch Backend API Integrations
+  async function apiStartSession(mode, tier, level) {
+    try {
+      const res = await fetch('/api/v1/game/session/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode, tier, level })
+      });
+      const data = await res.json();
+      if (data && data.session) currentSessionId = data.session.id;
+    } catch (e) {}
+  }
+
+  async function apiSubmitSession(score, maxTile, duration, completed) {
+    try {
+      await fetch('/api/v1/game/session/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: currentSessionId, score, max_tile: maxTile, duration_seconds: Math.round(duration), completed })
+      });
+    } catch (e) {}
+  }
+
+  // Support Query Form Handler
+  const supportQueryForm = document.getElementById('support-query-form');
+  const queryToast = document.getElementById('query-toast');
+  if (supportQueryForm) {
+    supportQueryForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const txt = supportQueryForm.querySelector('textarea')?.value;
+      audioSynth.playVictory();
+      try {
+        await fetch('/api/v1/support/submit-query', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query_text: txt })
+        });
+      } catch (err) {}
+      if (queryToast) {
+        queryToast.classList.remove('hidden');
+        setTimeout(() => queryToast.classList.add('hidden'), 3500);
+      }
+      supportQueryForm.reset();
+    });
   }
 
   // Dual-Phase Loader Sequence (Matching Figma Loader_01 & Loader_02)
@@ -471,7 +519,9 @@ document.addEventListener('DOMContentLoaded', () => {
     targetValue = target;
     currentScore = 0;
     hasWon = false;
+    gameStartTime = Date.now();
     updateScoreDisplay();
+    apiStartSession(modeLabel, levelTag, currentLevel);
 
     if (modalVictory) modalVictory.classList.add('hidden');
     if (modalGameOver) modalGameOver.classList.add('hidden');
@@ -547,27 +597,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gameBoard.appendChild(scoreElem);
     setTimeout(() => scoreElem.remove(), 850);
 
-    // 2. Particle Burst Sparks
-    const colors = ['#ffbd00', '#ff5400', '#ff0054', '#9e0059', '#390099', '#04c7fd'];
-    for (let i = 0; i < 12; i++) {
-      const p = document.createElement('div');
-      p.className = 'fx-particle';
-      const angle = (i / 12) * Math.PI * 2 + (Math.random() * 0.4 - 0.2);
-      const dist = 30 + Math.random() * 40;
-      const dx = Math.cos(angle) * dist;
-      const dy = Math.sin(angle) * dist;
-
-      p.style.left = `${x}px`;
-      p.style.top = `${y}px`;
-      p.style.setProperty('--dx', `${dx}px`);
-      p.style.setProperty('--dy', `${dy}px`);
-      p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
-      gameBoard.appendChild(p);
-      setTimeout(() => p.remove(), 650);
-    }
-
-    // 3. Screen Shake for High-Value Merges (>= 128)
+    // 2. Screen Shake for High-Value Merges (>= 128)
     if (val >= 128) {
       gameBoard.classList.add('screen-shake');
       setTimeout(() => gameBoard.classList.remove('screen-shake'), 220);
@@ -721,6 +751,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function triggerGameOver() {
     clearInterval(timerInterval);
     audioSynth.playGameOver();
+    const dur = (Date.now() - gameStartTime) / 1000;
+    const maxTile = Math.max(...board.flat());
+    apiSubmitSession(currentScore, maxTile, dur, false);
     if (gameoverScore) gameoverScore.textContent = currentScore;
     if (modalGameOver) modalGameOver.classList.remove('hidden');
   }
@@ -734,6 +767,9 @@ document.addEventListener('DOMContentLoaded', () => {
           if (board[r][c] >= targetValue) {
             hasWon = true;
             clearInterval(timerInterval);
+            const dur = (Date.now() - gameStartTime) / 1000;
+            const maxTile = Math.max(...board.flat());
+            apiSubmitSession(currentScore, maxTile, dur, true);
             if (victoryLvl) victoryLvl.textContent = currentLevel;
             audioSynth.playVictory();
             setTimeout(() => {
