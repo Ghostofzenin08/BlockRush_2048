@@ -230,6 +230,17 @@ class BlockRush2048:
             pass
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption("BlockRush 2048")
+        icon_candidates = [
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "assets", "goz_dark.png"),
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "goz_dark.png")
+        ]
+        for ip in icon_candidates:
+            if os.path.exists(ip):
+                try:
+                    pygame.display.set_icon(pygame.image.load(ip))
+                    break
+                except Exception:
+                    pass
         self.clock = pygame.time.Clock()
 
         self.mega_font = load_font(60, bold=True)
