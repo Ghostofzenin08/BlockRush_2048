@@ -1,4 +1,4 @@
-﻿// Firebase Configuration for BlockRush
+// Firebase Configuration for BlockRush
 const firebaseConfig = {
   apiKey: "AIzaSyDk0t5kyDfHWttNuTZfeLJY7ztQzgPn0mM",
   authDomain: "blockrush-5b539.firebaseapp.com",
@@ -12,15 +12,11 @@ const firebaseConfig = {
 // Initialize Firebase App
 let firebaseApp = null;
 let firebaseAuth = null;
-let firebaseAnalytics = null;
 
 try {
   if (typeof firebase !== 'undefined') {
     firebaseApp = firebase.initializeApp(firebaseConfig);
     firebaseAuth = firebase.auth();
-    if (firebase.analytics) {
-      firebaseAnalytics = firebase.analytics();
-    }
     console.log("Firebase initialized successfully for BlockRush.");
   }
 } catch (e) {

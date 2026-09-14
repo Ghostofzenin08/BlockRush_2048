@@ -116,11 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function getCurrentUserIdentifier() {
-    if (window.BlockRushAuth && window.BlockRushAuth.currentUser) {
-      const u = window.BlockRushAuth.currentUser;
-      return u.displayName || (u.email ? u.email.split('@')[0] : u.uid);
-    }
-    return 'player0123';
+    const u = window.BlockRushAuth?.currentUser;
+    return u?.displayName || u?.email?.split('@')[0] || u?.uid || 'player0123';
   }
 
   // Native Fetch Backend API Integrations with Neon DB
@@ -949,9 +946,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (authUnloggedView) authUnloggedView.classList.add('hidden');
       if (authLoggedView) authLoggedView.classList.remove('hidden');
-
-      const pgHandle = document.getElementById('pg-player-handle');
-      if (pgHandle) pgHandle.textContent = `#${name}`;
     } else {
       if (authBtnText) authBtnText.textContent = 'Sign In';
       if (authUnloggedView) authUnloggedView.classList.remove('hidden');

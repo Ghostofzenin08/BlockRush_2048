@@ -14,8 +14,16 @@ os.makedirs(SESSIONS_DIR, exist_ok=True)
 class JSONStorageService:
     @staticmethod
     def _path(name):
-        clean = str(name).replace("/", "_").replace("\\", "_")
-        return os.path.join(SESSIONS_DIR, clean)
+        return os.path.join(SESSIONS_DIR, os.path.basename(str(name)))
+
+    @staticmethod
+    def _calculate_unlocked_tiers(existing_unlocked, highest_tile, score):
+        unlocked = set(existing_unlocked or ["Beginner"])
+        unlocked.add("Beginner")
+        if (highest_tile or 2) >= 64 or (score or 0) >= 500: unlocked.add("Advanced")
+        if (highest_tile or 2) >= 128 or (score or 0) >= 1500: unlocked.add("Pro")
+        if (highest_tile or 2) >= 256 or (score or 0) >= 3000: unlocked.add("Master")
+        return list(unlocked)
 
     @classmethod
     def get_session_file_path(cls, user_id, session_id):
@@ -98,13 +106,7 @@ class JSONStorageService:
             ph.current_level = max(ph.current_level or 1, session_data.get("current_level", 1) or 1)
             ph.level_tier = session_data.get("level_tier", "Beginner")
             ph.last_active = datetime.now(timezone.utc)
-
-            unlocked = set(ph.unlocked_tiers or ["Beginner"])
-            unlocked.add("Beginner")
-            if (ph.highest_tile or 2) >= 64 or (score or 0) >= 500: unlocked.add("Advanced")
-            if (ph.highest_tile or 2) >= 128 or (score or 0) >= 1500: unlocked.add("Pro")
-            if (ph.highest_tile or 2) >= 256 or (score or 0) >= 3000: unlocked.add("Master")
-            ph.unlocked_tiers = list(unlocked)
+            ph.unlocked_tiers = cls._calculate_unlocked_tiers(ph.unlocked_tiers, ph.highest_tile, score)
 
             recent = list(ph.recent_sessions or [])
             recent.insert(0, {
@@ -156,13 +158,7 @@ class JSONStorageService:
         history["current_level"] = max(history["current_level"], latest_session.get("current_level", 1))
         history["level_tier"] = latest_session.get("level_tier", "Beginner")
         history["last_active"] = datetime.now(timezone.utc).isoformat()
-
-        unlocked = set(history.get("unlocked_tiers", ["Beginner"]))
-        unlocked.add("Beginner")
-        if history["highest_tile"] >= 64 or score >= 500: unlocked.add("Advanced")
-        if history["highest_tile"] >= 128 or score >= 1500: unlocked.add("Pro")
-        if history["highest_tile"] >= 256 or score >= 3000: unlocked.add("Master")
-        history["unlocked_tiers"] = list(unlocked)
+        history["unlocked_tiers"] = cls._calculate_unlocked_tiers(history.get("unlocked_tiers"), history["highest_tile"], score)
 
         recent = history.get("recent_sessions", [])
         recent.insert(0, {

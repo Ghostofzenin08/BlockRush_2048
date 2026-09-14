@@ -1,23 +1,11 @@
 import os
 from datetime import timedelta
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-# Load environment variables from .env
-load_dotenv()
-backend_env = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
-if os.path.exists(backend_env):
-    load_dotenv(backend_env)
-root_env = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".env"))
-if os.path.exists(root_env):
-    load_dotenv(root_env)
+load_dotenv(find_dotenv())
 
 def get_database_uri():
-    db_url = os.environ.get("DATABASE_URL")
-    if db_url:
-        if db_url.startswith("postgres://"):
-            db_url = db_url.replace("postgres://", "postgresql://", 1)
-        return db_url
-    return "sqlite:///blockrush_dev.db"
+    return os.getenv("DATABASE_URL", "sqlite:///blockrush_dev.db").replace("postgres://", "postgresql://", 1)
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev_secret_key_default_blockrush")
@@ -32,15 +20,6 @@ class Config:
         "pool_pre_ping": True,
     }
     CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "*").split(",")
-
-    # Firebase Settings
-    FIREBASE_API_KEY = os.environ.get("FIREBASE_API_KEY", "")
-    FIREBASE_AUTH_DOMAIN = os.environ.get("FIREBASE_AUTH_DOMAIN", "")
-    FIREBASE_PROJECT_ID = os.environ.get("FIREBASE_PROJECT_ID", "")
-    FIREBASE_STORAGE_BUCKET = os.environ.get("FIREBASE_STORAGE_BUCKET", "")
-    FIREBASE_MESSAGING_SENDER_ID = os.environ.get("FIREBASE_MESSAGING_SENDER_ID", "")
-    FIREBASE_APP_ID = os.environ.get("FIREBASE_APP_ID", "")
-    FIREBASE_MEASUREMENT_ID = os.environ.get("FIREBASE_MEASUREMENT_ID", "")
 
 class DevelopmentConfig(Config):
     DEBUG = True
