@@ -23,6 +23,10 @@ try {
   console.warn("Firebase initialization warning:", e);
 }
 
+window.BLOCKRUSH_API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.origin.includes('onrender.com'))
+  ? ''
+  : 'https://blockrush-2048.onrender.com';
+
 // Global Auth State Manager
 window.BlockRushAuth = {
   currentUser: null,
@@ -31,7 +35,8 @@ window.BlockRushAuth = {
   async syncWithBackend(user) {
     if (!user) return null;
     try {
-      const res = await fetch('/api/v1/auth/firebase-login', {
+      const apiBase = window.BLOCKRUSH_API_BASE || '';
+      const res = await fetch(`${apiBase}/api/v1/auth/firebase-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

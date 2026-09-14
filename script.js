@@ -120,6 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return u?.displayName || u?.email?.split('@')[0] || u?.uid || 'player0123';
   }
 
+  const getApiBase = () => window.BLOCKRUSH_API_BASE || '';
+
   // Native Fetch Backend API Integrations with Neon DB
   async function apiStartSession(mode, tier, level) {
     try {
@@ -128,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (window.BlockRushAuth?.jwtToken) {
         headers['Authorization'] = `Bearer ${window.BlockRushAuth.jwtToken}`;
       }
-      const res = await fetch('/api/v1/game/session/start', {
+      const res = await fetch(`${getApiBase()}/api/v1/game/session/start`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -155,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (window.BlockRushAuth?.jwtToken) {
         headers['Authorization'] = `Bearer ${window.BlockRushAuth.jwtToken}`;
       }
-      await fetch('/api/v1/game/session/submit', {
+      await fetch(`${getApiBase()}/api/v1/game/session/submit`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
@@ -182,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadPlaygroundSummary() {
     try {
       const userId = getCurrentUserIdentifier();
-      const res = await fetch(`/api/v1/game/player/summary/${encodeURIComponent(userId)}`);
+      const res = await fetch(`${getApiBase()}/api/v1/game/player/summary/${encodeURIComponent(userId)}`);
       const data = await res.json();
       if (data && data.player_data) {
         const p = data.player_data;
