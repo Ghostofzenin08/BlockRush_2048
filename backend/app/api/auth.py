@@ -79,3 +79,46 @@ def me():
     if not user:
         return jsonify({"success": False, "error": "User not found."}), 404
     return jsonify({"success": True, "user": user.to_dict()}), 200
+
+@auth_bp.route("/firebase-login", methods=["POST"])
+def firebase_login():
+    data = request.get_json() or {}
+    firebase_uid = data.get("uid")
+    email = (data.get("email") or "").strip().lower()
+    display_name = data.get("displayName") or (email.split("@")[0] if email else "Player")
+    photo_url = data.get("photoURL")
+
+    if not firebase_uid:
+        return jsonify({"success": False, "error": "Firebase UID is required."}), 400
+
+    user = User.query.filter((User.firebase_uid == firebase_uid) | (User.email == email)).first()
+    if not user:
+        user = User(
+            firebase_uid=firebase_uid,
+            email=email or f"{firebase_uid}@firebase.blockrush",
+            username=display_name,
+            display_name=display_name,
+            photo_url=photo_url
+        )
+        db.session.add(user)
+    else:
+        user.firebase_uid = firebase_uid
+        if display_name and not user.display_name:
+            user.display_name = display_name
+        if photo_url:
+            user.photo_url = photo_url
+        if email and not user.email:
+            user.email = email
+
+    db.session.commit()
+
+    access_token = create_access_token(identity=str(user.id))
+    refresh_token = create_refresh_token(identity=str(user.id))
+
+    return jsonify({
+        "success": True,
+        "message": "Firebase user authenticated and synced with Neon DB.",
+        "user": user.to_dict(),
+        "access_token": access_token,
+        "refresh_token": refresh_token
+    }), 200

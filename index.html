@@ -48,11 +48,18 @@
 
   <!-- Screen 2: Main Menu View (Exact Figma Node 710:1168) -->
   <div id="screen-menu" class="screen">
-    <!-- Top-right theme toggle (Figma Node 710:1942 & 710:2) -->
-    <button id="btn-theme" class="top-theme-btn" title="Toggle Theme">
-      <img src="assets/sun.svg" alt="Theme" class="theme-sun-icon dark-only">
-      <img src="assets/moon.svg" alt="Theme" class="theme-sun-icon light-only">
-    </button>
+    <!-- Top-right nav actions: Auth and Theme -->
+    <div class="top-nav-actions">
+      <button id="btn-auth" class="top-auth-btn" title="Sign In with Firebase">
+        <span class="material-symbols-outlined auth-ic">account_circle</span>
+        <span id="auth-btn-text" class="auth-btn-label">Sign In</span>
+      </button>
+
+      <button id="btn-theme" class="top-theme-btn" title="Toggle Theme">
+        <img src="assets/sun.svg" alt="Theme" class="theme-sun-icon dark-only">
+        <img src="assets/moon.svg" alt="Theme" class="theme-sun-icon light-only">
+      </button>
+    </div>
 
     <div class="menu-container">
       
@@ -396,7 +403,7 @@
 
       <!-- Player Badge Banner (Figma Node 710:2102) -->
       <div class="pg-banner">
-        <span class="player-handle">#Jonedoe@123</span>
+        <span class="player-handle" id="pg-player-handle">#Jonedoe@123</span>
         <div class="pg-avatar-wrap">
           <img src="assets/badge_bronze.png" alt="Bronze Badge" class="pg-badge-hero">
         </div>
@@ -740,6 +747,74 @@
     </div>
   </div>
 
-  <script src="script.js?v=5.1"></script>
+  <!-- Modal 4: Firebase Auth Dialog -->
+  <div id="modal-auth" class="modal-overlay hidden">
+    <div class="auth-modal-card">
+      <button id="btn-close-auth" class="modal-close-btn" title="Close">&times;</button>
+      
+      <!-- When Not Logged In -->
+      <div id="auth-unlogged-view">
+        <div class="auth-brand-badge">
+          <div class="blockrush-logo mini">
+            <span class="sq sq-1"></span>
+            <span class="sq sq-2"></span>
+            <span class="sq sq-3"></span>
+            <span class="sq sq-4"></span>
+          </div>
+          <h3>Join BlockRush</h3>
+        </div>
+        <p class="auth-desc">Save your progress, badges & scores to the cloud with Firebase & Neon DB!</p>
+
+        <!-- Google Sign-In Button -->
+        <button id="btn-google-login" class="google-auth-btn" type="button">
+          <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <div class="auth-divider"><span>or with email</span></div>
+
+        <form id="auth-email-form">
+          <div class="form-group">
+            <input type="text" id="auth-name" placeholder="Display Name (optional)" autocomplete="name">
+          </div>
+          <div class="form-group">
+            <input type="email" id="auth-email" placeholder="Your Email" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <input type="password" id="auth-password" placeholder="Password (min 6 characters)" required autocomplete="current-password">
+          </div>
+          <div id="auth-error-msg" class="auth-error hidden"></div>
+          <button type="submit" id="btn-submit-email" class="act-btn auth-submit-btn">Sign In</button>
+        </form>
+
+        <div class="auth-footer-toggle">
+          <span id="auth-toggle-text">Need an account?</span>
+          <button id="btn-toggle-auth-mode" class="link-btn" type="button">Create Account</button>
+        </div>
+      </div>
+
+      <!-- When Logged In -->
+      <div id="auth-logged-view" class="hidden">
+        <div class="logged-profile-card">
+          <div class="profile-avatar-wrap">
+            <img id="logged-avatar-img" src="assets/goz_dark.png" alt="Avatar" class="logged-avatar">
+          </div>
+          <h3 id="logged-display-name">Player Name</h3>
+          <p id="logged-email">player@email.com</p>
+          <div class="auth-badge-pill">
+            <span class="status-dot"></span> Synced with Neon DB
+          </div>
+          <button id="btn-logout" class="act-btn btn-logout-danger" type="button">Sign Out</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase App & Auth SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+  <script src="firebase-config.js?v=2.0"></script>
+  <script src="script.js?v=5.2"></script>
 </body>
 </html>

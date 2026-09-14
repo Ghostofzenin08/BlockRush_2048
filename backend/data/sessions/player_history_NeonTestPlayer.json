@@ -1,0 +1,36 @@
+{
+  "user_id": "NeonTestPlayer",
+  "current_level": 1,
+  "level_tier": "Beginner",
+  "current_score": 1024,
+  "high_score": 1024,
+  "best_score": 1024,
+  "highest_tile": 64,
+  "total_moves": 0,
+  "total_playtime_seconds": 0,
+  "sessions_completed": 2,
+  "unlocked_tiers": [
+    "Advanced",
+    "Beginner"
+  ],
+  "latest_grid_size": "4x4",
+  "last_active": "2026-09-14T05:33:49.411054+00:00",
+  "recent_sessions": [
+    {
+      "session_id": "sess_55",
+      "mode": "classic",
+      "score": 1024,
+      "highest_tile": 64,
+      "status": "won",
+      "date": "2026-09-14T05:33:49.411088+00:00"
+    },
+    {
+      "session_id": "sess_55",
+      "mode": "classic",
+      "score": 0,
+      "highest_tile": 2,
+      "status": "playing",
+      "date": "2026-09-14T05:33:45.498837+00:00"
+    }
+  ]
+}

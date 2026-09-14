@@ -115,14 +115,27 @@ document.addEventListener('DOMContentLoaded', () => {
     return 'Beginner';
   }
 
-  // Native Fetch Backend API Integrations
+  function getCurrentUserIdentifier() {
+    if (window.BlockRushAuth && window.BlockRushAuth.currentUser) {
+      const u = window.BlockRushAuth.currentUser;
+      return u.displayName || (u.email ? u.email.split('@')[0] : u.uid);
+    }
+    return 'player0123';
+  }
+
+  // Native Fetch Backend API Integrations with Neon DB
   async function apiStartSession(mode, tier, level) {
     try {
+      const userId = getCurrentUserIdentifier();
+      const headers = { 'Content-Type': 'application/json' };
+      if (window.BlockRushAuth?.jwtToken) {
+        headers['Authorization'] = `Bearer ${window.BlockRushAuth.jwtToken}`;
+      }
       const res = await fetch('/api/v1/game/session/start', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
-          user_id: 'player0123',
+          user_id: userId,
           mode,
           tier,
           level,
@@ -139,12 +152,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function apiSubmitSession(score, maxTile, duration, completed) {
     try {
+      const userId = getCurrentUserIdentifier();
       const tier = getLevelTier(score, maxTile);
+      const headers = { 'Content-Type': 'application/json' };
+      if (window.BlockRushAuth?.jwtToken) {
+        headers['Authorization'] = `Bearer ${window.BlockRushAuth.jwtToken}`;
+      }
       await fetch('/api/v1/game/session/submit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
-          user_id: 'player0123',
+          user_id: userId,
           session_id: currentSessionId,
           mode: gameMode,
           current_level: currentLevel,
@@ -160,12 +178,14 @@ document.addEventListener('DOMContentLoaded', () => {
           game_status: completed ? 'won' : 'lost'
         })
       });
+      loadPlaygroundSummary();
     } catch (e) {}
   }
 
   async function loadPlaygroundSummary() {
     try {
-      const res = await fetch('/api/v1/game/player/summary/player0123');
+      const userId = getCurrentUserIdentifier();
+      const res = await fetch(`/api/v1/game/player/summary/${encodeURIComponent(userId)}`);
       const data = await res.json();
       if (data && data.player_data) {
         const p = data.player_data;
@@ -173,6 +193,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (bannerSub) {
           bannerSub.textContent = `Tier: ${p.level_tier || 'Beginner'} | Best: ${p.best_score || 0} | Top Tile: ${p.highest_tile || 2}`;
         }
+        const pgLevelNum = document.querySelector('.lvl-num');
+        if (pgLevelNum && p.current_level !== undefined) {
+          pgLevelNum.textContent = p.current_level;
+        }
+      }
+      const pgHandle = document.getElementById('pg-player-handle');
+      if (pgHandle) {
+        pgHandle.textContent = `#${userId}`;
       }
     } catch (e) {}
   }
@@ -887,4 +915,136 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // --- FIREBASE AUTH UI CONTROLLER ---
+  const btnAuth = document.getElementById('btn-auth');
+  const authBtnText = document.getElementById('auth-btn-text');
+  const modalAuth = document.getElementById('modal-auth');
+  const btnCloseAuth = document.getElementById('btn-close-auth');
+  const authUnloggedView = document.getElementById('auth-unlogged-view');
+  const authLoggedView = document.getElementById('auth-logged-view');
+  const btnGoogleLogin = document.getElementById('btn-google-login');
+  const authEmailForm = document.getElementById('auth-email-form');
+  const authNameInput = document.getElementById('auth-name');
+  const authEmailInput = document.getElementById('auth-email');
+  const authPassInput = document.getElementById('auth-password');
+  const authErrorMsg = document.getElementById('auth-error-msg');
+  const btnSubmitEmail = document.getElementById('btn-submit-email');
+  const btnToggleAuthMode = document.getElementById('btn-toggle-auth-mode');
+  const authToggleText = document.getElementById('auth-toggle-text');
+  const loggedDisplayName = document.getElementById('logged-display-name');
+  const loggedEmail = document.getElementById('logged-email');
+  const loggedAvatarImg = document.getElementById('logged-avatar-img');
+  const btnLogout = document.getElementById('btn-logout');
+
+  let isSignUpMode = false;
+
+  function updateAuthUI(user) {
+    if (user) {
+      const name = user.displayName || user.email?.split('@')[0] || 'Player';
+      if (authBtnText) authBtnText.textContent = name;
+      if (loggedDisplayName) loggedDisplayName.textContent = name;
+      if (loggedEmail) loggedEmail.textContent = user.email || '';
+      if (loggedAvatarImg && user.photoURL) {
+        loggedAvatarImg.src = user.photoURL;
+      }
+      if (authUnloggedView) authUnloggedView.classList.add('hidden');
+      if (authLoggedView) authLoggedView.classList.remove('hidden');
+
+      const pgHandle = document.getElementById('pg-player-handle');
+      if (pgHandle) pgHandle.textContent = `#${name}`;
+    } else {
+      if (authBtnText) authBtnText.textContent = 'Sign In';
+      if (authUnloggedView) authUnloggedView.classList.remove('hidden');
+      if (authLoggedView) authLoggedView.classList.add('hidden');
+    }
+  }
+
+  if (window.BlockRushAuth) {
+    window.BlockRushAuth.onStateChanged((user) => {
+      updateAuthUI(user);
+      loadPlaygroundSummary();
+    });
+  }
+
+  if (btnAuth) {
+    btnAuth.addEventListener('click', () => {
+      audioSynth.playClick();
+      if (modalAuth) modalAuth.classList.remove('hidden');
+    });
+  }
+
+  if (btnCloseAuth) {
+    btnCloseAuth.addEventListener('click', () => {
+      audioSynth.playClick();
+      if (modalAuth) modalAuth.classList.add('hidden');
+    });
+  }
+
+  if (btnGoogleLogin) {
+    btnGoogleLogin.addEventListener('click', async () => {
+      audioSynth.playClick();
+      if (authErrorMsg) authErrorMsg.classList.add('hidden');
+      try {
+        await window.BlockRushAuth.loginWithGoogle();
+        if (modalAuth) modalAuth.classList.add('hidden');
+      } catch (err) {
+        if (authErrorMsg) {
+          authErrorMsg.textContent = err.message || 'Google sign-in failed.';
+          authErrorMsg.classList.remove('hidden');
+        }
+      }
+    });
+  }
+
+  if (btnToggleAuthMode) {
+    btnToggleAuthMode.addEventListener('click', () => {
+      isSignUpMode = !isSignUpMode;
+      if (authErrorMsg) authErrorMsg.classList.add('hidden');
+      if (isSignUpMode) {
+        btnSubmitEmail.textContent = 'Create Account';
+        btnToggleAuthMode.textContent = 'Sign In';
+        authToggleText.textContent = 'Already have an account?';
+        if (authNameInput) authNameInput.style.display = 'block';
+      } else {
+        btnSubmitEmail.textContent = 'Sign In';
+        btnToggleAuthMode.textContent = 'Create Account';
+        authToggleText.textContent = 'Need an account?';
+        if (authNameInput) authNameInput.style.display = 'none';
+      }
+    });
+  }
+
+  if (authEmailForm) {
+    authEmailForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      audioSynth.playClick();
+      if (authErrorMsg) authErrorMsg.classList.add('hidden');
+      const email = authEmailInput.value.trim();
+      const password = authPassInput.value;
+      const displayName = authNameInput ? authNameInput.value.trim() : '';
+
+      try {
+        if (isSignUpMode) {
+          await window.BlockRushAuth.signupWithEmail(email, password, displayName);
+        } else {
+          await window.BlockRushAuth.loginWithEmail(email, password);
+        }
+        if (modalAuth) modalAuth.classList.add('hidden');
+      } catch (err) {
+        if (authErrorMsg) {
+          authErrorMsg.textContent = err.message || 'Authentication error occurred.';
+          authErrorMsg.classList.remove('hidden');
+        }
+      }
+    });
+  }
+
+  if (btnLogout) {
+    btnLogout.addEventListener('click', async () => {
+      audioSynth.playClick();
+      await window.BlockRushAuth.logout();
+    });
+  }
+
 });
+

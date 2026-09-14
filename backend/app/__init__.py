@@ -19,6 +19,12 @@ def create_app(config_name="development"):
     def index():
         return send_from_directory(frontend_dir, "index.html")
 
+    @app.route("/<path:filename>", methods=["GET"])
+    def serve_static(filename):
+        if os.path.exists(os.path.join(frontend_dir, filename)):
+            return send_from_directory(frontend_dir, filename)
+        return jsonify({"success": False, "error": {"code": "NOT_FOUND", "message": "Resource not found."}}), 404
+
     # Register API Blueprints under /api/v1/
     from app.api.auth import auth_bp
     from app.api.game import game_bp
